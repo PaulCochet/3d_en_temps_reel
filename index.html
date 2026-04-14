@@ -13,7 +13,8 @@
     body {
       background: #1a1a2e;
       overflow: hidden;
-      cursor: none; /* Masque le curseur par défaut */
+      cursor: none;
+      /* Masque le curseur par défaut */
     }
 
     #custom-cursor {
@@ -22,14 +23,17 @@
       left: 0;
       width: 20px;
       height: 20px;
-      border: 2px solid #00e5ff; /* Cyan assorti à la scène */
+      border: 2px solid #00e5ff;
+      /* Cyan assorti à la scène */
       background: rgba(0, 229, 255, 0.15);
       box-shadow: 0 0 12px rgba(0, 229, 255, 0.8), inset 0 0 6px rgba(0, 229, 255, 0.5);
-      pointer-events: none; /* Ne bloque pas le clic */
+      pointer-events: none;
+      /* Ne bloque pas le clic */
       z-index: 10000;
       will-change: transform;
       mix-blend-mode: screen;
-      opacity: 0; /* Caché jusqu'à ce que la souris bouge */
+      opacity: 0;
+      /* Caché jusqu'à ce que la souris bouge */
       transition: opacity 0.3s ease;
     }
   </style>
@@ -41,7 +45,7 @@
 
     // 1. La scène
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#1a1a2e');
+    scene.background = new THREE.Color('#000000');
 
     // 2. La caméra
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -61,11 +65,11 @@
 
     // ── Le Soleil Central ─────────────────────────────────────────────────
     const sunGeo = new THREE.SphereGeometry(2, 32, 32);
-    const sunMat = new THREE.MeshStandardMaterial({ 
-      color: '#ffdd00', 
-      emissive: '#ffaa00', 
-      emissiveIntensity: 1,
-      roughness: 0.1 
+    const sunMat = new THREE.MeshStandardMaterial({
+      color: '#ffff00',
+      emissive: '#ffaa00',
+      emissiveIntensity: 4.0, // Rendu du soleil ultra lumineux
+      roughness: 0.1
     });
     const sun = new THREE.Mesh(sunGeo, sunMat);
     pivot.add(sun);
@@ -85,17 +89,28 @@
     const planets = [];
 
     planetsData.forEach((data, index) => {
-      const mat = new THREE.MeshStandardMaterial({ 
-        color: data.color, 
-        roughness: 0.3, 
-        metalness: 0.6 
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: data.color,
+        emissive: data.color,
+        emissiveIntensity: 0.3, // Brillance lumineuse interne
+        roughness: 0.1,
+        metalness: 0.8,
+        clearcoat: 1.0, // Effet de vernis très brillant
+        clearcoatRoughness: 0.1
       });
       const mesh = new THREE.Mesh(data.geo, mat);
-      
+
       // Anneau de Saturne (index 5)
       if (index === 5) {
         const ringGeo = new THREE.TorusGeometry(2.2, 0.2, 8, 32);
-        const ringMat = new THREE.MeshStandardMaterial({ color: '#f0e6a8', metalness: 0.5 });
+        const ringMat = new THREE.MeshPhysicalMaterial({
+          color: '#f0e6a8',
+          emissive: '#f0e6a8',
+          emissiveIntensity: 0.2,
+          metalness: 0.8,
+          roughness: 0.1,
+          clearcoat: 1.0
+        });
         const ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.x = Math.PI / 2.5;
         mesh.add(ring);
@@ -111,7 +126,7 @@
         baseY: (Math.random() - 0.5) * 2,   // légère déclinaison orbitale
         hoverOffset: new THREE.Vector3(0, 0, 0), // décalage actuel (physique)
         targetHoverOffset: new THREE.Vector3(0, 0, 0), // décalage cible
-        rotSpeed: new THREE.Vector3(Math.random()*0.02, Math.random()*0.02, Math.random()*0.02)
+        rotSpeed: new THREE.Vector3(Math.random() * 0.02, Math.random() * 0.02, Math.random() * 0.02)
       });
     });
 
@@ -119,8 +134,14 @@
     const particles = [];
     for (let i = 0; i < 200; i++) {
       const sg = new THREE.SphereGeometry(0.05 + Math.random() * 0.05, 8, 8);
-      const sm = new THREE.MeshBasicMaterial({
-        color: new THREE.Color().setHSL(Math.random(), 0.5, 0.8)
+      const starColor = new THREE.Color().setHSL(Math.random(), 0.8, 0.8);
+      const sm = new THREE.MeshPhysicalMaterial({
+        color: starColor,
+        emissive: starColor,
+        emissiveIntensity: 2.0, // Étoiles auto-lumineuses et brillantes
+        metalness: 1.0,
+        roughness: 0.0,
+        clearcoat: 1.0
       });
       const s = new THREE.Mesh(sg, sm);
       s.position.set(
@@ -133,11 +154,17 @@
     }
 
     // ── Lumières ──────────────────────────────────────────────────────────
-    scene.add(new THREE.AmbientLight('#ffffff', 0.15)); // sombre
+    scene.add(new THREE.AmbientLight('#ffffff', 0.8)); // Fond plus lumineux
 
-    // Lumière ponctuelle issue du soleil
-    const sunLight = new THREE.PointLight('#ffea00', 8, 60);
+    // Lumière ponctuelle issue du soleil (boostée)
+    const sunLight = new THREE.PointLight('#ffffff', 50, 150); // Blanc très intense
     pivot.add(sunLight);
+
+    // Lumière d'appoint directionnelle pour faire briller les matériaux (effet clearcoat)
+    const fillLight = new THREE.DirectionalLight('#ffffff', 2.0);
+    fillLight.position.set(10, 20, 10);
+    scene.add(fillLight);
+
 
     // ── Interaction souris & Curseur personnalisé ─────────────────────────
     const cursor = document.createElement('div');
@@ -163,7 +190,7 @@
 
       // Mise à jour du raycaster
       pointer.x = mouseX;
-      pointer.y = -mouseY; 
+      pointer.y = -mouseY;
     });
 
     // ── Boucle d'animation ────────────────────────────────────────────────
