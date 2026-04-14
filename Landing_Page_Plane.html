@@ -25,16 +25,6 @@
       pointer-events: none;
     }
 
-    /* ── Overlay noir (transition fin hero) ── */
-    #black-overlay {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      opacity: 0;
-      z-index: 150; /* Au-dessus du canvas (100) et de tout */
-      pointer-events: none;
-    }
-
     /* ── Navbar ── */
     nav {
       position: fixed;
@@ -232,9 +222,6 @@
   <!-- Canvas 3D (fixe, premier plan) -->
   <canvas class="webgl"></canvas>
 
-  <!-- Overlay noir pour la transition de fin Hero -->
-  <div id="black-overlay"></div>
-
   <!-- Navbar -->
   <nav>
     <div class="nav-logo">Pollux <em>✦</em> Air</div>
@@ -364,7 +351,7 @@
 
     // ── Animation Scroll ────────────────────────────────────────────────────
     function initScroll() {
-      const overlay = document.getElementById('black-overlay');
+
 
       // 1. L'avion DESCEND depuis le haut vers le centre
       gsap.to(planeGroup.position, {
@@ -402,19 +389,7 @@
         }
       });
 
-      // 4. Overlay NOIR : apparaît uniquement sur les DERNIERS 25% du hero
-      gsap.to(overlay, {
-        opacity: 1,
-        ease: 'power2.in',
-        scrollTrigger: {
-          trigger: '#hero',
-          start: '75% top',
-          end: 'bottom top',
-          scrub: 1,
-        }
-      });
-
-      // 5. FLOU progressif sur le contenu hero (filter blur sur .hero-sticky)
+      // 4. FLOU progressif sur le contenu hero (filter blur sur .hero-sticky)
       const heroSticky = document.querySelector('.hero-sticky');
       gsap.to(heroSticky, {
         filter: 'blur(30px)',
@@ -428,19 +403,7 @@
         }
       });
 
-      // 6. L'overlay NOIR disparaît et le canvas 3D s'efface quand les sections arrivent
-      gsap.to(overlay, {
-        opacity: 0,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '#flotte',       // Dès que #flotte entre dans le bas de l'écran
-          start: 'top bottom',
-          end: 'top 60%',
-          scrub: 1,
-        }
-      });
-
-      // Cacher aussi le canvas 3D une fois le hero passé (l'avion n'est plus nécessaire)
+      // 5. Canvas 3D s'efface une fois le hero passé
       gsap.to(canvas, {
         opacity: 0,
         ease: 'power2.out',
