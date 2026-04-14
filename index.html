@@ -16,7 +16,6 @@
       cursor: none;
       /* Masque le curseur par défaut */
     }
-
   </style>
 </head>
 
@@ -33,8 +32,8 @@
 
     // 2. La caméra
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.z = 25; // Reculé pour voir tout le système
-    camera.position.y = 8;  // Vue légèrement en plongée
+    camera.position.z = 30; // Reculé pour voir tout le système
+    camera.position.y = 14;  // Vue légèrement en plongée
     camera.lookAt(0, 0, 0);
 
     // 3. Le renderer
@@ -200,8 +199,8 @@
     let mouseX = 0;
     let mouseY = 0;
     window.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;   
-      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;  
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
 
       pointer.x = mouseX;
       pointer.y = -mouseY;
@@ -270,12 +269,12 @@
       vector.unproject(camera);
       vector.sub(camera.position).normalize();
       const distanceToCamera = 8; // La fusée vole à 8 unités devant l'objectif
-      
+
       targetRocketPos.copy(camera.position).add(vector.multiplyScalar(distanceToCamera));
-      
+
       // La fusée suit doucement le vrai pointeur (lerp spatial)
       rocketContainer.position.lerp(targetRocketPos, 0.2);
-      
+
       // La fusée "regarde" constamment en direction de la Terre (planète 2)
       const earthWorldPos = new THREE.Vector3();
       planets[2].mesh.getWorldPosition(earthWorldPos);
