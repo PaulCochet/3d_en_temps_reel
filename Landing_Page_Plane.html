@@ -1,1 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pollux Air Line - Redéfinir l'horizon</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b132b;    /* Bleu nuit profond */
+      --text-main: #ffffff;   /* Blanc pur */
+      --accent: #d4af37;      /* Or brossé */
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      overflow-x: hidden;
+      /* Style moderne de scrollbar (Webkit) */
+      scrollbar-color: var(--accent) var(--bg-color);
+      scrollbar-width: thin;
+    }
+
+    /* Le Canvas 3D reste fixe en arrière plan */
+    .webgl {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      outline: none;
+    }
+
+    /* Structure de Scroll */
+    .scroll-container {
+      position: relative;
+      z-index: 10;
+    }
+
+    section {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 10%;
+    }
+
+    /* Alignements spécifiques selon les sections pour laisser respirer l'avion */
+    #hero {
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(to bottom, rgba(11,19,43,0.8) 0%, rgba(11,19,43,0) 50%);
+    }
+
+    #design {
+      align-items: flex-end; /* Texte à droite, avion à gauche */
+      text-align: right;
+    }
+
+    #experience {
+      align-items: flex-start; /* Texte à gauche, avion zoomé à droite */
+    }
+
+    #eco {
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(to top, rgba(11,19,43,0) 0%, rgba(11,19,43,0.9) 100%);
+    }
+
+    #footer {
+      align-items: center;
+      text-align: center;
+      background: rgba(11,19,43,0.85);
+    }
+
+    /* Typographie */
+    h1 {
+      font-size: clamp(3rem, 6vw, 6rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 1.25rem;
+      font-weight: 300;
+      line-height: 1.8;
+      max-width: 600px;
+      margin-bottom: 2rem;
+    }
+
+    /* Bouton Premium */
+    .cta-btn {
+      display: inline-block;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--bg-color);
+      background-color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+    
+    .cta-btn:hover {
+      background-color: transparent;
+      color: var(--accent);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Ecran de Chargement Immersif */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-color);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1.5s ease;
+    }
+
+    .loader-text {
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+      color: var(--accent);
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    .progress-bar {
+      width: 300px;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    /* Formulaire simplifié */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .contact-form input, .contact-form button {
+      padding: 1rem;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .contact-form input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .contact-form button {
+      background: var(--accent);
+      color: var(--bg-color);
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    .contact-form button:hover {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="loader-text">Autorisation de décollage...</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+  </div>
+
+  <!-- WebGL Canvas -->
+  <canvas class="webgl"></canvas>
+
+  <!-- HTML Scrollable Content -->
+  <div class="scroll-container">
+    
+    <!-- Section 1 : Hero -->
+    <section id="hero">
+      <h1>Pollux Air Line</h1>
+      <p style="font-size: 1.5rem; color: var(--accent); max-width: 100%;">Redéfinir l'horizon.</p>
+      <div style="margin-top: 4rem;">
+        <a href="#réservation" class="cta-btn">Embarquer</a>
+      </div>
+    </section>
+
+    <!-- Section 2 : Design -->
+    <section id="design">
+      <h2>Design & Aérodynamisme</h2>
+      <p>Une technologie de pointe alliée à une silhouette futuriste. Notre flotte est conçue pour fendre l'air avec une efficacité inégalée, réduisant la consommation tout en offrant une stabilité parfaite en haute altitude.</p>
+    </section>
+
+    <!-- Section 3 : Expérience Cabin (Zoom) -->
+    <section id="experience">
+      <h2>L'Expérience Cabine</h2>
+      <p>Prenez place au sein d'une cabine pensée comme un salon privé. Profitez d'un confort premium, d'un silence absolu, et de hublots panoramiques offrant une vue imprenable sur la stratosphère.</p>
+    </section>
+
+    <!-- Section 4 : Eco-responsable -->
+    <section id="eco">
+      <h2>Au-delà des Nuages</h2>
+      <p>Notre engagement pour une aviation durable. Propulsée par des énergies de nouvelle génération, Pollux Air Line réinvente le voyage intercontinental sans laisser d'empreinte.</p>
+    </section>
+
+    <!-- Section 5 : Footer / Réservation -->
+    <section id="footer">
+      <h2 id="réservation">Prêt au Départ</h2>
+      <p>Réservez votre prochain voyage et faites partie de l'élite de l'aviation.</p>
+      <form class="contact-form" onsubmit="event.preventDefault()">
+        <input type="text" placeholder="Votre Nom" required>
+        <input type="email" placeholder="Adresse Email" required>
+        <input type="text" placeholder="Destination de rêve" required>
+        <button type="submit">Demander une invitation</button>
+      </form>
+      <p style="margin-top: 4rem; font-size: 0.9rem; opacity: 0.5;">© 2026 Pollux Air Line. Tous droits réservés.</p>
+    </section>
+
+  </div>
+
+  <!-- GSAP & ScrollTrigger v3.12.2 CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js (ES Modules via esm.sh) -->
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.160.0';
+    import { OBJLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/OBJLoader.js';
+    import { MTLLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/MTLLoader.js';
+
+    // 1. Définition de la scène
+    const canvas = document.querySelector('.webgl');
+    const scene = new THREE.Scene();
+    // Le fond HTML est déjà un Bleu Nuit, mais on peut forcer le brouillard 3D en couleur de scène
+    scene.fog = new THREE.Fog('#0b132b', 10, 40);
+
+    // 2. Éclairage premium (pour mettre en valeur l'Avion.mtl)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
+    scene.add(ambientLight);
+
+    // Lumière "Soleil" dorée directionnelle
+    const sunLight = new THREE.DirectionalLight(0xd4af37, 2.5);
+    sunLight.position.set(10, 10, 5);
+    scene.add(sunLight);
+
+    // Lumière de débouchage (fill light) bleutée
+    const fillLight = new THREE.DirectionalLight(0x4a7cff, 1);
+    fillLight.position.set(-10, -5, -5);
+    scene.add(fillLight);
+
+    // 3. Caméra
+    const sizes = { width: window.innerWidth, height: window.innerHeight };
+    const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 1, 100);
+    camera.position.set(0, 0, 15);
+    scene.add(camera);
+
+    // 4. Moteur de Rendu (Renderer)
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Groupe principal pour diriger l'avion via GSAP
+    const planeGroup = new THREE.Group();
+    scene.add(planeGroup);
+
+    // L'enfant du groupe permet de créer le "flottement perpétuel" indépendant
+    const planeOscillator = new THREE.Group();
+    planeGroup.add(planeOscillator);
+
+    // 5. Chargement de l'avion (Asynchrone avec MTLLoader puis OBJLoader)
+    const progressBar = document.getElementById('progress');
+    const loaderWrapper = document.getElementById('loader');
+
+    const mtlLoader = new MTLLoader();
+    mtlLoader.load(
+      'Asset/Avion.mtl', 
+      (materials) => {
+        materials.preload();
+        
+        const objLoader = new OBJLoader();
+        objLoader.setMaterials(materials);
+        
+        objLoader.load(
+          'Asset/Avion.obj',
+          (object) => {
+            // Echelle et recentrage de l'objet brut
+            object.scale.set(0.15, 0.15, 0.15); // A adapter selon la taille réelle de l'OBJ exporté
+            
+            // Centrage géométrique parfait
+            const box = new THREE.Box3().setFromObject(object);
+            const center = box.getCenter(new THREE.Vector3());
+            object.position.x += (object.position.x - center.x);
+            object.position.y += (object.position.y - center.y);
+            object.position.z += (object.position.z - center.z);
+            
+            // On oriente l'objet de face vers la caméra en supposant l'axe naturel
+            object.rotation.y = Math.PI; 
+
+            planeOscillator.add(object);
+
+            // Phase finale du chargement
+            progressBar.style.width = '100%';
+            setTimeout(() => {
+              loaderWrapper.style.opacity = '0';
+              setTimeout(() => {
+                loaderWrapper.style.display = 'none';
+                initScrollAnimations();
+              }, 1500); // Temps pour la transition CSS de fade out
+            }, 500);
+          },
+          (xhr) => {
+            // Mise à jour de la barre
+            if (xhr.lengthComputable) {
+              const percentComplete = (xhr.loaded / xhr.total) * 100;
+              progressBar.style.width = percentComplete + '%';
+            }
+          },
+          (error) => console.error("Erreur chargement OBJ :", error)
+        );
+    }, 
+    undefined, 
+    (error) => console.error("Erreur chargement MTL :", error));
+
+    // Particules Éco/Espace pour la section 4 (Cachées au début)
+    const starsGeo = new THREE.BufferGeometry();
+    const starsCount = 400;
+    const posArray = new Float32Array(starsCount * 3);
+    for(let i = 0; i < starsCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 60; // Distribution aléatoire
+    }
+    starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const starsMat = new THREE.PointsMaterial({ size: 0.08, color: '#ffffff', transparent: true, opacity: 0 });
+    const starsMesh = new THREE.Points(starsGeo, starsMat);
+    starsMesh.position.y = 15; // Placés "au dessus"
+    scene.add(starsMesh);
+
+    // 6. Animation Scrollytelling avec GSAP et ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initScrollAnimations() {
+      // Configuration maître de la Timeline liée au scroll
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".scroll-container",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1 // Inertie douce de 1 seconde après la fin du scroll souris
+        }
+      });
+
+      // SECTION 1 (Hero) --> SECTION 2 (Design)
+      // L'avion pivote pour se mettre de profil et se décale à gauche 
+      tl.to(planeGroup.rotation, { y: Math.PI / 2 + 0.2, ease: "power1.inOut" }, 0);
+      tl.to(planeGroup.position, { x: -3.5, z: 2, ease: "power1.inOut" }, 0);
+
+      // SECTION 2 (Design) --> SECTION 3 (Expérience Cabine)
+      // On zoome fortement sur lui (ou on approche la caméra), il revient à droite pour qu'on voit l'hublot
+      tl.to(camera.position, { z: 6, ease: "power1.inOut" }, 1);
+      tl.to(planeGroup.rotation, { x: 0.3, y: Math.PI / 2 - 0.1, z: 0.3, ease: "power1.inOut" }, 1);
+      tl.to(planeGroup.position, { x: 2, y: -1, ease: "power1.inOut" }, 1);
+
+      // SECTION 3 (Cabine) --> SECTION 4 (Eco)
+      // La caméra recule, l'avion incline son nez (pitch up) comme pour grimper dans l'atmosphère
+      tl.to(camera.position, { z: 18, ease: "power1.inOut" }, 2);
+      tl.to(planeGroup.rotation, { x: -Math.PI / 6, y: Math.PI / 4, z: -0.2, ease: "power1.inOut" }, 2);
+      tl.to(planeGroup.position, { x: 0, y: 3.5, ease: "power1.inOut" }, 2);
+      // Fait apparaitre les étoiles / particules environnementales
+      tl.to(starsMat, { opacity: 0.8 }, 2);
+      tl.to(starsMesh.position, { y: 0, ease: "power1.out" }, 2); // Les étoiles "descendent" pour illustrer la montée
+
+      // SECTION 4 (Eco) --> SECTION 5 (Footer)
+      // Stabilisation : Vue 3/4 arrière majestueuse
+      tl.to(planeGroup.rotation, { x: 0, y: -Math.PI * 0.7, z: 0, ease: "power1.inOut" }, 3);
+      tl.to(planeGroup.position, { x: 0, y: 0.5, ease: "power1.inOut" }, 3);
+      // Les étoiles disparaissent en douceur
+      tl.to(starsMat, { opacity: 0 }, 3);
+    }
+
+    // 7. Flottement et Rendu Actif
+    const clock = new THREE.Clock();
+    let mouseX = 0;
+    let mouseY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    function tick() {
+      const time = clock.getElapsedTime();
+
+      // Mouvement naturel de flottement perpétuel de l'avion (vagues)
+      planeOscillator.position.y = Math.sin(time * 1.2) * 0.25;
+
+      // Très léger effet d'immersion avec la caméra suivant la souris (Parallax)
+      camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+      // Ne pas toucher l'axe Z car manipulé par GSAP, ni trop modifier l'axe Y
+
+      // Rotation de l'environnement étoilé global
+      starsMesh.rotation.y = time * 0.02;
+
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(tick);
+    }
+    tick();
+
+    // 8. Responsive
+    window.addEventListener('resize', () => {
+      sizes.width = window.innerWidth;
+      sizes.height = window.innerHeight;
+      camera.aspect = sizes.width / sizes.height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(sizes.width, sizes.height);
+    });
+  </script>
+</body>
+</html>
