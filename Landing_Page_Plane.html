@@ -2,467 +2,841 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Pollux Air Line - Redéfinir l'horizon</title>
-  <!-- Google Fonts: Outfit -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pollux Air Line — Redéfinir l'Horizon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-color: #0b132b;    /* Bleu nuit profond */
-      --text-main: #ffffff;   /* Blanc pur */
-      --accent: #d4af37;      /* Or brossé */
+      --bg: #ffffff;
+      --text: #0d0d0d;
+      --text-muted: #666;
+      --accent: #c9a84c;       /* Or poli */
+      --accent-light: #f5e9c8; /* Surlignage doré clair */
+      --border: #e8e8e8;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Outfit', sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: auto; } /* GSAP gère tout */
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
       overflow-x: hidden;
-      /* Style moderne de scrollbar (Webkit) */
-      scrollbar-color: var(--accent) var(--bg-color);
-      scrollbar-width: thin;
+      cursor: none;
     }
 
-    /* Le Canvas 3D reste fixe en arrière plan */
+    /* ── Curseur personnalisé ───────────────────── */
+    #cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.35s ease;
+      opacity: 0.5;
+    }
+
+    /* ── Loader ─────────────────────────────────── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      transition: opacity 1s ease;
+    }
+    .loader-logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .loader-logo span { color: var(--accent); }
+    .loader-track {
+      width: 200px;
+      height: 1px;
+      background: #eee;
+      position: relative;
+      overflow: hidden;
+    }
+    .loader-fill {
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.15s ease;
+    }
+    .loader-pct {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+
+    /* ── Canvas 3D ──────────────────────────────── */
     .webgl {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -1;
-      outline: none;
+      z-index: 1;
+      pointer-events: none;
     }
 
-    /* Structure de Scroll */
+    /* ── Navbar ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 28px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border: 1.5px solid var(--text);
+      border-radius: 50px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.3s;
+    }
+    .nav-cta:hover {
+      background: var(--text);
+      color: #fff;
+    }
+
+    /* ── Sections ───────────────────────────────── */
     .scroll-container {
       position: relative;
       z-index: 10;
     }
 
     section {
-      position: relative;
-      width: 100%;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 0 10%;
+      padding: 120px 10%;
+      position: relative;
     }
 
-    /* Alignements spécifiques selon les sections pour laisser respirer l'avion */
+    /* ── HERO ───────────────────────────────────── */
     #hero {
-      align-items: center;
-      text-align: center;
-      background: linear-gradient(to bottom, rgba(11,19,43,0.8) 0%, rgba(11,19,43,0) 50%);
+      min-height: 200vh;  /* Long pour que l'avion ait le temps de descendre */
+      justify-content: flex-start;
+      padding-top: 40vh;
+      pointer-events: none;
     }
 
-    #design {
-      align-items: flex-end; /* Texte à droite, avion à gauche */
-      text-align: right;
-    }
-
-    #experience {
-      align-items: flex-start; /* Texte à gauche, avion zoomé à droite */
-    }
-
-    #eco {
-      align-items: center;
-      text-align: center;
-      background: linear-gradient(to top, rgba(11,19,43,0) 0%, rgba(11,19,43,0.9) 100%);
-    }
-
-    #footer {
-      align-items: center;
-      text-align: center;
-      background: rgba(11,19,43,0.85);
-    }
-
-    /* Typographie */
-    h1 {
-      font-size: clamp(3rem, 6vw, 6rem);
-      font-weight: 800;
+    .hero-top-label {
+      font-size: 0.8rem;
+      letter-spacing: 5px;
       text-transform: uppercase;
-      letter-spacing: 4px;
-      margin-bottom: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 40px;
     }
 
-    h2 {
-      font-size: clamp(2rem, 4vw, 4rem);
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
+    .hero-headline {
+      font-size: clamp(3.5rem, 7vw, 8rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      max-width: 900px;
+      position: relative;
+      z-index: 2;
     }
 
-    p {
-      font-size: 1.25rem;
-      font-weight: 300;
-      line-height: 1.8;
-      max-width: 600px;
-      margin-bottom: 2rem;
-    }
-
-    /* Bouton Premium */
-    .cta-btn {
+    /* Chaque mot est un span pour le surlignage progressif */
+    .hero-headline .word {
       display: inline-block;
-      padding: 1rem 3rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--bg-color);
-      background-color: var(--accent);
-      border: 1px solid var(--accent);
-      border-radius: 50px;
-      text-decoration: none;
-      transition: all 0.4s ease;
-      cursor: pointer;
+      margin-right: 0.2em;
+      position: relative;
     }
-    
-    .cta-btn:hover {
-      background-color: transparent;
-      color: var(--accent);
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    .hero-headline .word::after {
+      content: '';
+      position: absolute;
+      left: -2px; right: -2px;
+      bottom: 4px; top: 4px;
+      background: var(--accent-light);
+      transform: scaleX(0);
+      transform-origin: left;
+      z-index: -1;
+      border-radius: 4px;
+      transition: none; /* GSAP gère */
     }
 
-    /* Ecran de Chargement Immersif */
-    #loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: var(--bg-color);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 1.5s ease;
-    }
-
-    .loader-text {
+    .hero-sub {
+      margin-top: 60px;
       font-size: 1.2rem;
-      letter-spacing: 4px;
-      color: var(--accent);
-      margin-bottom: 30px;
-      text-transform: uppercase;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 400px;
+      line-height: 1.8;
+      pointer-events: auto;
     }
 
-    .progress-bar {
-      width: 300px;
-      height: 2px;
-      background: rgba(255,255,255,0.1);
+    .hero-scroll-hint {
+      margin-top: 80px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      pointer-events: auto;
+    }
+    .scroll-line {
+      width: 60px;
+      height: 1px;
+      background: var(--text-muted);
       position: relative;
       overflow: hidden;
     }
-
-    .progress-fill {
+    .scroll-line::after {
+      content: '';
       position: absolute;
-      top: 0; left: 0;
-      height: 100%;
+      left: -100%; top: 0;
+      width: 100%; height: 100%;
       background: var(--accent);
-      width: 0%;
-      transition: width 0.2s ease;
+      animation: scrollLine 1.8s ease infinite;
+    }
+    @keyframes scrollLine {
+      0%   { left: -100%; }
+      100% { left: 100%; }
     }
 
-    /* Formulaire simplifié */
-    .contact-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto;
+    /* ── Section Stats / Chiffres ─────────────── */
+    #stats {
+      background: #f9f9f9;
+      min-height: 60vh;
     }
-    .contact-form input, .contact-form button {
-      padding: 1rem;
-      border-radius: 5px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: white;
-      font-size: 1rem;
-      font-family: inherit;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px;
     }
-    .contact-form input:focus {
-      outline: none;
-      border-color: var(--accent);
+    .stat-item { border-left: 2px solid var(--accent); padding-left: 24px; }
+    .stat-number {
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--text);
     }
-    .contact-form button {
-      background: var(--accent);
-      color: var(--bg-color);
-      font-weight: 600;
-      cursor: pointer;
+    .stat-label {
+      font-size: 0.9rem;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
+      color: var(--text-muted);
+      margin-top: 8px;
     }
-    .contact-form button:hover {
-      background: transparent;
+
+    /* ── Sections Fonctionnalités ─────────────── */
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
       color: var(--accent);
-      border-color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 32px;
+      max-width: 700px;
+    }
+
+    .section-body {
+      font-size: 1.25rem;
+      font-weight: 300;
+      line-height: 1.9;
+      max-width: 560px;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+
+    /* Icônes inline SVG */
+    .icon-row {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .icon-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      max-width: 240px;
+    }
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      background: #f2f2f2;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-box svg { width: 22px; height: 22px; }
+    .icon-text-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .icon-text-body {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Sections alternées droite/gauche ──────── */
+    #design { align-items: flex-end; text-align: right; }
+    #design .section-body { margin-left: auto; }
+    #design .icon-row { justify-content: flex-end; }
+    #design .icon-item { flex-direction: row-reverse; text-align: left; }
+
+    #experience, #eco { align-items: flex-start; }
+
+    /* ── Footer ────────────────────────────────── */
+    #footer {
+      background: var(--text);
+      color: #fff;
+      align-items: center;
+      text-align: center;
+    }
+    #footer .section-label { color: var(--accent); }
+    #footer .section-title { color: #fff; margin: 0 auto 32px; text-align: center; }
+    #footer .section-body { color: rgba(255,255,255,0.5); text-align: center; margin: 0 auto 60px; }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 80px;
+    }
+    .form-row input {
+      padding: 16px 24px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      border-radius: 50px;
+      outline: none;
+      transition: border 0.3s;
+      min-width: 240px;
+    }
+    .form-row input::placeholder { color: rgba(255,255,255,0.3); }
+    .form-row input:focus { border-color: var(--accent); }
+    .form-row button {
+      padding: 16px 36px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    .form-row button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.5);
+    }
+    .footer-bottom {
+      color: rgba(255,255,255,0.2);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+    }
+
+    /* ── Diviseur décoratif ─────────────────────── */
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 40px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Loading Screen -->
+  <!-- Curseur personnalisé -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Loader -->
   <div id="loader">
-    <div class="loader-text">Autorisation de décollage...</div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress"></div>
-    </div>
+    <div class="loader-logo">Pollux <span>Air Line</span></div>
+    <div class="loader-track"><div class="loader-fill" id="progress"></div></div>
+    <div class="loader-pct" id="pct-label">0%</div>
   </div>
 
-  <!-- WebGL Canvas -->
+  <!-- Canvas 3D (fixe, fond transparent) -->
   <canvas class="webgl"></canvas>
 
-  <!-- HTML Scrollable Content -->
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-logo">Pollux <span>✦</span> Air</div>
+    <ul class="nav-links">
+      <li><a href="#design">Flotte</a></li>
+      <li><a href="#experience">Cabine</a></li>
+      <li><a href="#eco">Engagement</a></li>
+    </ul>
+    <a href="#footer" class="nav-cta">Réserver</a>
+  </nav>
+
+  <!-- Contenu Scrollable -->
   <div class="scroll-container">
-    
-    <!-- Section 1 : Hero -->
+
+    <!-- ── HERO : La Destination de Rêve ── -->
     <section id="hero">
-      <h1>Pollux Air Line</h1>
-      <p style="font-size: 1.5rem; color: var(--accent); max-width: 100%;">Redéfinir l'horizon.</p>
-      <div style="margin-top: 4rem;">
-        <a href="#réservation" class="cta-btn">Embarquer</a>
+      <div class="hero-top-label">Bienvenue à bord ✦ Vol de Prestige</div>
+      <h1 class="hero-headline" id="hero-text">
+        <!-- Les mots sont générés via JS pour le surlignage individuel -->
+      </h1>
+      <p class="hero-sub">Une nouvelle ère pour l'aviation de prestige. L'avenir est déjà en vol.</p>
+      <div class="hero-scroll-hint">
+        <div class="scroll-line"></div>
+        Scrollez pour embarquer
       </div>
     </section>
 
-    <!-- Section 2 : Design -->
+    <!-- ── Stats ── -->
+    <section id="stats">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">128</div>
+          <div class="stat-label">Destinations mondiales</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">99%</div>
+          <div class="stat-label">Taux de ponctualité</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4.9★</div>
+          <div class="stat-label">Satisfaction passagers</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 2 : Design & Technologie ── -->
     <section id="design">
-      <h2>Design & Aérodynamisme</h2>
-      <p>Une technologie de pointe alliée à une silhouette futuriste. Notre flotte est conçue pour fendre l'air avec une efficacité inégalée, réduisant la consommation tout en offrant une stabilité parfaite en haute altitude.</p>
+      <div class="section-label">Technologie</div>
+      <div class="divider" style="margin-left: auto;"></div>
+      <h2 class="section-title">Conçu pour<br>Fendre l'Air</h2>
+      <p class="section-body">
+        Notre flotte de nouvelle génération repousse les limites de l'aérodynamisme.
+        Chaque courbe est calculée, chaque matériau sélectionné pour la performance absolue.
+      </p>
+      <div class="icon-row">
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Fuselage composite</div>
+            <div class="icon-text-body">Alliages de fibre de carbone ultra-légers</div>
+          </div>
+        </div>
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Vol Longue Durée</div>
+            <div class="icon-text-body">Jusqu'à 18h de vol sans escale</div>
+          </div>
+        </div>
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Propulsion Next-Gen</div>
+            <div class="icon-text-body">Moteurs SAF à très faibles émissions</div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Section 3 : Expérience Cabin (Zoom) -->
+    <!-- ── Section 3 : L'Expérience Cabine ── -->
     <section id="experience">
-      <h2>L'Expérience Cabine</h2>
-      <p>Prenez place au sein d'une cabine pensée comme un salon privé. Profitez d'un confort premium, d'un silence absolu, et de hublots panoramiques offrant une vue imprenable sur la stratosphère.</p>
+      <div class="section-label">Confort</div>
+      <div class="divider"></div>
+      <h2 class="section-title">L'Espace<br>Autrement</h2>
+      <p class="section-body">
+        Votre cabine privée est un sanctuaire à 12 000 mètres d'altitude.
+        Matériaux raffinés, lumière adaptative et silence absolu redéfinissent l'idée du voyage.
+      </p>
+      <div class="icon-row">
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <path d="M12 22s-8-4-8-10a8 8 0 0116 0c0 6-8 10-8 10z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Suite Privée</div>
+            <div class="icon-text-body">Porte coulissante, lit full-flat 200cm</div>
+          </div>
+        </div>
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Lumière Circadienne</div>
+            <div class="icon-text-body">Éclairage intelligent synchronisé</div>
+          </div>
+        </div>
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Silence Premium</div>
+            <div class="icon-text-body">Isolation phonique niveau hôtel palace</div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Section 4 : Eco-responsable -->
+    <!-- ── Section 4 : Éco-Responsable ── -->
     <section id="eco">
-      <h2>Au-delà des Nuages</h2>
-      <p>Notre engagement pour une aviation durable. Propulsée par des énergies de nouvelle génération, Pollux Air Line réinvente le voyage intercontinental sans laisser d'empreinte.</p>
+      <div class="section-label">Engagement</div>
+      <div class="divider"></div>
+      <h2 class="section-title">Voler Mieux,<br>Pour Demain</h2>
+      <p class="section-body">
+        Chaque vol Pollux est une démarche. Compensations carbone, carburants durables
+        et partenariats avec des pionniers de l'aviation verte. Votre voyage, notre responsabilité.
+      </p>
+      <div class="icon-row">
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">Carbon Neutral 2030</div>
+            <div class="icon-text-body">Zeŕo émissions nettes d'ici 2030</div>
+          </div>
+        </div>
+        <div class="icon-item">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <div>
+            <div class="icon-text-title">SAF Carburant</div>
+            <div class="icon-text-body">50% de votre vol alimenté durablement</div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Section 5 : Footer / Réservation -->
+    <!-- ── Footer / Réservation ── -->
     <section id="footer">
-      <h2 id="réservation">Prêt au Départ</h2>
-      <p>Réservez votre prochain voyage et faites partie de l'élite de l'aviation.</p>
-      <form class="contact-form" onsubmit="event.preventDefault()">
-        <input type="text" placeholder="Votre Nom" required>
-        <input type="email" placeholder="Adresse Email" required>
-        <input type="text" placeholder="Destination de rêve" required>
-        <button type="submit">Demander une invitation</button>
+      <div class="section-label">Prêt à Embarquer</div>
+      <h2 class="section-title">Votre Prochaine<br>Destination</h2>
+      <p class="section-body">Rejoignez l'élite de l'aviation de prestige. Un conseiller vous contacte sous 24h.</p>
+      <form onsubmit="event.preventDefault()">
+        <div class="form-row">
+          <input type="text" placeholder="Votre Nom">
+          <input type="email" placeholder="Adresse Email">
+          <input type="text" placeholder="Destination de rêve">
+          <button type="submit">Embarquer →</button>
+        </div>
       </form>
-      <p style="margin-top: 4rem; font-size: 0.9rem; opacity: 0.5;">© 2026 Pollux Air Line. Tous droits réservés.</p>
+      <div class="footer-bottom">© 2026 Pollux Air Line · Tous droits réservés</div>
     </section>
 
-  </div>
+  </div><!-- /scroll-container -->
 
-  <!-- GSAP & ScrollTrigger v3.12.2 CDN -->
+  <!-- GSAP & ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-  <!-- Three.js (ES Modules via esm.sh) -->
   <script type="module">
     import * as THREE from 'https://esm.sh/three@0.160.0';
     import { OBJLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/OBJLoader.js';
     import { MTLLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/MTLLoader.js';
 
-    // 1. Définition de la scène
+    // ── Curseur ────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let curX = 0, curY = 0, ringX = 0, ringY = 0;
+    window.addEventListener('mousemove', e => { curX = e.clientX; curY = e.clientY; });
+    (function loopCursor() {
+      ringX += (curX - ringX) * 0.12;
+      ringY += (curY - ringY) * 0.12;
+      cursor.style.left = curX + 'px'; cursor.style.top = curY + 'px';
+      ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
+      requestAnimationFrame(loopCursor);
+    })();
+
+    // ── Hero : Génération des mots surlignables ────
+    const phrase = "Volez vers le bout du monde. Paris. Tokyo. Le bout du ciel.";
+    const heroText = document.getElementById('hero-text');
+    phrase.split(' ').forEach(word => {
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.textContent = word + ' ';
+      heroText.appendChild(span);
+    });
+
+    // ── Three.js Setup ─────────────────────────────
     const canvas = document.querySelector('.webgl');
     const scene = new THREE.Scene();
-    // Le fond HTML est déjà un Bleu Nuit, mais on peut forcer le brouillard 3D en couleur de scène
-    scene.fog = new THREE.Fog('#0b132b', 10, 40);
+    // Pas de fond de scène (alpha: true), le fond blanc est le body lui-même
 
-    // 2. Éclairage premium (pour mettre en valeur l'Avion.mtl)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
-    scene.add(ambientLight);
-
-    // Lumière "Soleil" dorée directionnelle
-    const sunLight = new THREE.DirectionalLight(0xd4af37, 2.5);
-    sunLight.position.set(10, 10, 5);
-    scene.add(sunLight);
-
-    // Lumière de débouchage (fill light) bleutée
-    const fillLight = new THREE.DirectionalLight(0x4a7cff, 1);
-    fillLight.position.set(-10, -5, -5);
-    scene.add(fillLight);
-
-    // 3. Caméra
-    const sizes = { width: window.innerWidth, height: window.innerHeight };
-    const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 1, 100);
-    camera.position.set(0, 0, 15);
+    const sizes = { w: window.innerWidth, h: window.innerHeight };
+    const camera = new THREE.PerspectiveCamera(45, sizes.w / sizes.h, 0.1, 200);
+    camera.position.set(0, 0, 10);
     scene.add(camera);
 
-    // 4. Moteur de Rendu (Renderer)
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(sizes.w, sizes.h);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0); // Fond transparent
 
-    // Groupe principal pour diriger l'avion via GSAP
-    const planeGroup = new THREE.Group();
-    scene.add(planeGroup);
+    // ── Éclairage (lumières vives adaptées au blanc) ─
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const key = new THREE.DirectionalLight(0xfff2d0, 3.5);
+    key.position.set(8, 12, 6);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xd0e8ff, 1.0);
+    fill.position.set(-8, -4, -6);
+    scene.add(fill);
 
-    // L'enfant du groupe permet de créer le "flottement perpétuel" indépendant
-    const planeOscillator = new THREE.Group();
-    planeGroup.add(planeOscillator);
+    // ── Groupe principal de l'avion ────────────────
+    const planeHolder = new THREE.Group(); // Position scroll-drivée
+    const planeOsc = new THREE.Group();    // Flottement doux, enfant du holder
+    planeHolder.add(planeOsc);
+    scene.add(planeHolder);
 
-    // 5. Chargement de l'avion (Asynchrone avec MTLLoader puis OBJLoader)
-    const progressBar = document.getElementById('progress');
-    const loaderWrapper = document.getElementById('loader');
+    // Avion caché au départ, il entre par le haut
+    planeHolder.position.y = 12; // Hors écran au-dessus
+
+    // ── Chargement OBJ/MTL ─────────────────────────
+    const progressEl = document.getElementById('progress');
+    const pctLabel = document.getElementById('pct-label');
+    const loaderEl = document.getElementById('loader');
 
     const mtlLoader = new MTLLoader();
-    mtlLoader.load(
-      'Asset/Avion.mtl', 
-      (materials) => {
-        materials.preload();
-        
-        const objLoader = new OBJLoader();
-        objLoader.setMaterials(materials);
-        
-        objLoader.load(
-          'Asset/Avion.obj',
-          (object) => {
-            // Echelle et recentrage de l'objet brut
-            object.scale.set(0.15, 0.15, 0.15); // A adapter selon la taille réelle de l'OBJ exporté
-            
-            // Centrage géométrique parfait
-            const box = new THREE.Box3().setFromObject(object);
-            const center = box.getCenter(new THREE.Vector3());
-            object.position.x += (object.position.x - center.x);
-            object.position.y += (object.position.y - center.y);
-            object.position.z += (object.position.z - center.z);
-            
-            // On oriente l'objet de face vers la caméra en supposant l'axe naturel
-            object.rotation.y = Math.PI; 
+    mtlLoader.load('Asset/Avion.mtl', (mats) => {
+      mats.preload();
+      const objLoader = new OBJLoader();
+      objLoader.setMaterials(mats);
+      objLoader.load(
+        'Asset/Avion.obj',
+        (obj) => {
+          // Mise à l'échelle et centrage
+          obj.scale.setScalar(0.45);
+          const box = new THREE.Box3().setFromObject(obj);
+          const c = box.getCenter(new THREE.Vector3());
+          obj.position.sub(c);
+          obj.rotation.y = Math.PI; // Face caméra
+          planeOsc.add(obj);
 
-            planeOscillator.add(object);
-
-            // Phase finale du chargement
-            progressBar.style.width = '100%';
+          // Fin du loader
+          progressEl.style.width = '100%';
+          pctLabel.textContent = '100%';
+          setTimeout(() => {
+            loaderEl.style.opacity = '0';
             setTimeout(() => {
-              loaderWrapper.style.opacity = '0';
-              setTimeout(() => {
-                loaderWrapper.style.display = 'none';
-                initScrollAnimations();
-              }, 1500); // Temps pour la transition CSS de fade out
-            }, 500);
-          },
-          (xhr) => {
-            // Mise à jour de la barre
-            if (xhr.lengthComputable) {
-              const percentComplete = (xhr.loaded / xhr.total) * 100;
-              progressBar.style.width = percentComplete + '%';
-            }
-          },
-          (error) => console.error("Erreur chargement OBJ :", error)
-        );
-    }, 
-    undefined, 
-    (error) => console.error("Erreur chargement MTL :", error));
+              loaderEl.style.display = 'none';
+              launchAnimations();
+            }, 1000);
+          }, 400);
+        },
+        (xhr) => {
+          if (xhr.lengthComputable) {
+            const p = Math.round((xhr.loaded / xhr.total) * 100);
+            progressEl.style.width = p + '%';
+            pctLabel.textContent = p + '%';
+          }
+        },
+        err => console.error(err)
+      );
+    }, undefined, err => console.error(err));
 
-    // Particules Éco/Espace pour la section 4 (Cachées au début)
-    const starsGeo = new THREE.BufferGeometry();
-    const starsCount = 400;
-    const posArray = new Float32Array(starsCount * 3);
-    for(let i = 0; i < starsCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 60; // Distribution aléatoire
-    }
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const starsMat = new THREE.PointsMaterial({ size: 0.08, color: '#ffffff', transparent: true, opacity: 0 });
-    const starsMesh = new THREE.Points(starsGeo, starsMat);
-    starsMesh.position.y = 15; // Placés "au dessus"
-    scene.add(starsMesh);
-
-    // 6. Animation Scrollytelling avec GSAP et ScrollTrigger
+    // ── GSAP ScrollTrigger ─────────────────────────
     gsap.registerPlugin(ScrollTrigger);
 
-    function initScrollAnimations() {
-      // Configuration maître de la Timeline liée au scroll
+    function launchAnimations() {
+      const words = document.querySelectorAll('.word');
+
+      // 1. Surlignage progressif des mots du Hero au scroll
+      words.forEach((word, i) => {
+        gsap.to(word, {
+          scrollTrigger: {
+            trigger: '#hero',
+            start: `${10 + i * (60 / words.length)}% center`,
+            end: `${10 + (i+1) * (60 / words.length)}% center`,
+            scrub: true,
+          },
+          '--scale': 1,
+          ease: 'none',
+          onUpdate: function() {
+            // On anime l'::after via opacity du inline-style
+            const progress = this.progress();
+            word.style.color = progress > 0.5 ? '#0d0d0d' : '#aaa';
+            word.style.setProperty('--highlight', progress > 0.5 ? '1' : '0');
+          }
+        });
+        // L'arrière-plan du mot en JS direct (plus simple que ::after)
+        gsap.to(word, {
+          background: `linear-gradient(to right, var(--accent-light) 100%, transparent 100%)`,
+          scrollTrigger: {
+            trigger: '#hero',
+            start: `${10 + i * (60 / words.length)}% center`,
+            end: `${10 + (i+0.8) * (60 / words.length)}% center`,
+            scrub: true,
+            onUpdate: (self) => {
+              const p = self.progress;
+              word.style.background = `linear-gradient(to right, #f5e9c8 ${p*100}%, transparent ${p*100}%)`;
+              word.style.borderRadius = '4px';
+            }
+          }
+        });
+      });
+
+      // 2. Timeline principale de l'avion (lié au scroll global)
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".scroll-container",
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1 // Inertie douce de 1 seconde après la fin du scroll souris
+          trigger: '.scroll-container',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1.5,
         }
       });
 
-      // SECTION 1 (Hero) --> SECTION 2 (Design)
-      // L'avion pivote pour se mettre de profil et se décale à gauche 
-      tl.to(planeGroup.rotation, { y: Math.PI / 2 + 0.2, ease: "power1.inOut" }, 0);
-      tl.to(planeGroup.position, { x: -3.5, z: 2, ease: "power1.inOut" }, 0);
+      // Entrée de l'avion : descend du haut pendant le Hero (long, car Hero = 200vh)
+      tl.to(planeHolder.position, { y: 0, duration: 4, ease: 'power2.out' }, 0);
+      tl.from(planeHolder, { }, 0); // placeholder
 
-      // SECTION 2 (Design) --> SECTION 3 (Expérience Cabine)
-      // On zoome fortement sur lui (ou on approche la caméra), il revient à droite pour qu'on voit l'hublot
-      tl.to(camera.position, { z: 6, ease: "power1.inOut" }, 1);
-      tl.to(planeGroup.rotation, { x: 0.3, y: Math.PI / 2 - 0.1, z: 0.3, ease: "power1.inOut" }, 1);
-      tl.to(planeGroup.position, { x: 2, y: -1, ease: "power1.inOut" }, 1);
+      // Hero -> Stats : légère mise à l'échelle et rotation frontale
+      tl.to(planeHolder.rotation, { y: 0.1, duration: 1.5 }, 3.5);
+      tl.to(planeHolder.position, { x: 0, y: 0 }, 3.5);
+      
+      // Stats -> Design (profil) : L'avion pivote à droite, se décale à gauche
+      tl.to(planeHolder.rotation, { y: Math.PI / 2 + 0.3, duration: 2, ease: 'power2.inOut' }, 5);
+      tl.to(planeHolder.position, { x: -4, y: 0, duration: 2 }, 5);
+      tl.to(planeHolder.scale, { x: 1.2, y: 1.2, z: 1.2, duration: 2 }, 5);
 
-      // SECTION 3 (Cabine) --> SECTION 4 (Eco)
-      // La caméra recule, l'avion incline son nez (pitch up) comme pour grimper dans l'atmosphère
-      tl.to(camera.position, { z: 18, ease: "power1.inOut" }, 2);
-      tl.to(planeGroup.rotation, { x: -Math.PI / 6, y: Math.PI / 4, z: -0.2, ease: "power1.inOut" }, 2);
-      tl.to(planeGroup.position, { x: 0, y: 3.5, ease: "power1.inOut" }, 2);
-      // Fait apparaitre les étoiles / particules environnementales
-      tl.to(starsMat, { opacity: 0.8 }, 2);
-      tl.to(starsMesh.position, { y: 0, ease: "power1.out" }, 2); // Les étoiles "descendent" pour illustrer la montée
+      // Design -> Expérience Cabine : Zoom sur la section centrale
+      tl.to(camera.position, { z: 4, duration: 2, ease: 'power2.in' }, 7);
+      tl.to(planeHolder.rotation, { y: Math.PI / 2 - 0.3, x: 0.25, duration: 2 }, 7);
+      tl.to(planeHolder.position, { x: 2.5, y: -0.5, duration: 2 }, 7);
 
-      // SECTION 4 (Eco) --> SECTION 5 (Footer)
-      // Stabilisation : Vue 3/4 arrière majestueuse
-      tl.to(planeGroup.rotation, { x: 0, y: -Math.PI * 0.7, z: 0, ease: "power1.inOut" }, 3);
-      tl.to(planeGroup.position, { x: 0, y: 0.5, ease: "power1.inOut" }, 3);
-      // Les étoiles disparaissent en douceur
-      tl.to(starsMat, { opacity: 0 }, 3);
+      // Expérience -> Eco : Dézoom puis montée de l'avion
+      tl.to(camera.position, { z: 14, duration: 2, ease: 'power1.out' }, 9);
+      tl.to(planeHolder.rotation, { x: -Math.PI / 7, y: Math.PI / 3, z: -0.1, duration: 2 }, 9);
+      tl.to(planeHolder.position, { x: 0, y: 4, duration: 2 }, 9);
+      tl.to(planeHolder.scale, { x: 0.8, y: 0.8, z: 0.8, duration: 2 }, 9);
+
+      // Eco -> Footer : Vue 3/4 arrière majestueux
+      tl.to(camera.position, { z: 8, duration: 2 }, 11);
+      tl.to(planeHolder.rotation, { x: 0, y: -Math.PI * 0.7, z: 0, duration: 2 }, 11);
+      tl.to(planeHolder.position, { x: 0, y: 0.5, duration: 2 }, 11);
+      tl.to(planeHolder.scale, { x: 1, y: 1, z: 1, duration: 2 }, 11);
     }
 
-    // 7. Flottement et Rendu Actif
+    // ── Boucle de rendu ─────────────────────────────
     const clock = new THREE.Clock();
-    let mouseX = 0;
-    let mouseY = 0;
-
-    window.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', e => {
+      mx = (e.clientX / sizes.w) * 2 - 1;
+      my = -(e.clientY / sizes.h) * 2 + 1;
     });
 
-    function tick() {
-      const time = clock.getElapsedTime();
-
-      // Mouvement naturel de flottement perpétuel de l'avion (vagues)
-      planeOscillator.position.y = Math.sin(time * 1.2) * 0.25;
-
-      // Très léger effet d'immersion avec la caméra suivant la souris (Parallax)
-      camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
-      // Ne pas toucher l'axe Z car manipulé par GSAP, ni trop modifier l'axe Y
-
-      // Rotation de l'environnement étoilé global
-      starsMesh.rotation.y = time * 0.02;
-
+    (function tick() {
+      const t = clock.getElapsedTime();
+      // Flottement doux
+      planeOsc.position.y = Math.sin(t * 1.1) * 0.2;
+      planeOsc.rotation.z = Math.sin(t * 0.7) * 0.02;
+      // Micro parallaxe caméra avec la souris
+      camera.position.x += (mx * 0.6 - camera.position.x) * 0.04;
       renderer.render(scene, camera);
-      window.requestAnimationFrame(tick);
-    }
-    tick();
+      requestAnimationFrame(tick);
+    })();
 
-    // 8. Responsive
+    // ── Responsive ──────────────────────────────────
     window.addEventListener('resize', () => {
-      sizes.width = window.innerWidth;
-      sizes.height = window.innerHeight;
-      camera.aspect = sizes.width / sizes.height;
+      sizes.w = innerWidth; sizes.h = innerHeight;
+      camera.aspect = sizes.w / sizes.h;
       camera.updateProjectionMatrix();
-      renderer.setSize(sizes.width, sizes.height);
+      renderer.setSize(sizes.w, sizes.h);
     });
   </script>
 </body>
