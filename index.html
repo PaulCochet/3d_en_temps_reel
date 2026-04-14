@@ -1,55 +1,77 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <style>
-    * { margin: 0; padding: 0; }
-    body { background: #0a0a0a; overflow: hidden; }
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0a0a0a;
+      overflow: hidden;
+    }
   </style>
 </head>
+
 <body>
-<script type="module">
-  import * as THREE from 'https://esm.sh/three@0.160.0';
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.160.0';
 
-  // 1. La scène
-  const scene = new THREE.Scene();
+    // 1. La scène
+    const scene = new THREE.Scene();
 
-  // 2. La caméra
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.z = 3;
+    // 2. La caméra
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.z = 3;
 
-  // 3. Le renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  // 4. Un objet (géométrie + matériau = mesh)
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshStandardMaterial({ color: '#6c63ff' });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-
-  // 5. La lumière
-  const light = new THREE.DirectionalLight('#ffffff', 2);
-  light.position.set(2, 4, 3);
-  scene.add(light);
-  scene.add(new THREE.AmbientLight('#ffffff', 0.3));
-
-  // 6. La boucle d'animation
-  function animate() {
-    requestAnimationFrame(animate);
-    cube.rotation.x += 0.005;
-    cube.rotation.y += 0.008;
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  // 7. Responsive
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    // 3. Le renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-</script>
+    document.body.appendChild(renderer.domElement);
+
+    // 4. Un objet (géométrie + matériau = mesh)
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshStandardMaterial({ color: '#6c63ff' });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    // 5. La lumière
+    const light = new THREE.DirectionalLight('#ffffff', 2);
+    light.position.set(2, 4, 3);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight('#ffffff', 0.3));
+
+    // 6. La boucle d'animation
+    // Suivi de la souris
+    let mouseX = 0;
+    let mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;  // -1 à 1
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2; // -1 à 1
+    });
+
+    // Boucle d'animation avec réaction souris
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Le cube suit la souris en douceur
+      cube.rotation.y += (mouseX * Math.PI - cube.rotation.y) * 0.05;
+      cube.rotation.x += (mouseY * Math.PI - cube.rotation.x) * 0.05;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // 7. Responsive
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
+
 </html>
