@@ -13,6 +13,24 @@
     body {
       background: #1a1a2e;
       overflow: hidden;
+      cursor: none; /* Masque le curseur par défaut */
+    }
+
+    #custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #00e5ff; /* Cyan assorti à la scène */
+      background: rgba(0, 229, 255, 0.15);
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.8), inset 0 0 6px rgba(0, 229, 255, 0.5);
+      pointer-events: none; /* Ne bloque pas le clic */
+      z-index: 10000;
+      will-change: transform;
+      mix-blend-mode: screen;
+      opacity: 0; /* Caché jusqu'à ce que la souris bouge */
+      transition: opacity 0.3s ease;
     }
   </style>
 </head>
@@ -103,10 +121,22 @@
     dirLight.position.set(2, 5, 4);
     scene.add(dirLight);
 
-    // ── Interaction souris ────────────────────────────────────────────────
+    // ── Interaction souris & Curseur personnalisé ─────────────────────────
+    const cursor = document.createElement('div');
+    cursor.id = 'custom-cursor';
+    document.body.appendChild(cursor);
+
+    let targetCursorX = window.innerWidth / 2;
+    let targetCursorY = window.innerHeight / 2;
+    let currentCursorX = targetCursorX;
+    let currentCursorY = targetCursorY;
+
     let mouseX = 0;
     let mouseY = 0;
     window.addEventListener('mousemove', (e) => {
+      cursor.style.opacity = '1'; // Affiche le curseur dès qu'on bouge
+      targetCursorX = e.clientX;
+      targetCursorY = e.clientY;
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;   // -1 à 1
       mouseY = (e.clientY / window.innerHeight - 0.5) * 2;  // -1 à 1
     });
@@ -150,6 +180,11 @@
       particles.forEach(({ mesh, offset }) => {
         mesh.position.y += Math.sin(t + offset) * 0.003;
       });
+
+      // Animation fluide du curseur personnalisé (approche + rotation)
+      currentCursorX += (targetCursorX - currentCursorX) * 0.35; // fluidité
+      currentCursorY += (targetCursorY - currentCursorY) * 0.35;
+      cursor.style.transform = `translate(${currentCursorX - 10}px, ${currentCursorY - 10}px) rotate(${t * 90}deg)`;
 
       renderer.render(scene, camera);
     }
