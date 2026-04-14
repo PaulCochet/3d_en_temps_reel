@@ -17,31 +17,15 @@
       /* Masque le curseur par défaut */
     }
 
-    #custom-cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #00e5ff;
-      /* Cyan assorti à la scène */
-      background: rgba(0, 229, 255, 0.15);
-      box-shadow: 0 0 12px rgba(0, 229, 255, 0.8), inset 0 0 6px rgba(0, 229, 255, 0.5);
-      pointer-events: none;
-      /* Ne bloque pas le clic */
-      z-index: 10000;
-      will-change: transform;
-      mix-blend-mode: screen;
-      opacity: 0;
-      /* Caché jusqu'à ce que la souris bouge */
-      transition: opacity 0.3s ease;
-    }
   </style>
 </head>
 
 <body>
   <script type="module">
     import * as THREE from 'https://esm.sh/three@0.160.0';
+    import { EffectComposer } from 'https://esm.sh/three@0.160.0/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'https://esm.sh/three@0.160.0/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'https://esm.sh/three@0.160.0/addons/postprocessing/UnrealBloomPass.js';
 
     // 1. La scène
     const scene = new THREE.Scene();
@@ -54,10 +38,22 @@
     camera.lookAt(0, 0, 0);
 
     // 3. Le renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; // Empêche le bug des flashs lumineux (tone mapping idéal HDR)
     document.body.appendChild(renderer.domElement);
+
+    // ── Post-processing (Effet Glow / Bloom) ──────────────────────────────
+    const renderScene = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    bloomPass.threshold = 0.85;  // Haut seuil : seules les étoiles et le soleil brillent, éliminant les flashs indésirables
+    bloomPass.strength = 1.0;    // Modération du glow
+    bloomPass.radius = 0.8;      // Diffusion spatiale du glow
+
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
 
     // ── Groupe pivot (toute la scène suit la souris) ──────────────────────
     const pivot = new THREE.Group();
@@ -166,29 +162,47 @@
     scene.add(fillLight);
 
 
-    // ── Interaction souris & Curseur personnalisé ─────────────────────────
-    const cursor = document.createElement('div');
-    cursor.id = 'custom-cursor';
-    document.body.appendChild(cursor);
+    // ── Curseur Fusée (Fusée Low Poly 3D) ─────────────────────────────────
+    const rocketContainer = new THREE.Group();
+    const rocket = new THREE.Group();
 
-    let targetCursorX = window.innerWidth / 2;
-    let targetCursorY = window.innerHeight / 2;
-    let currentCursorX = targetCursorX;
-    let currentCursorY = targetCursorY;
+    // Corps de la fusée (Blanc)
+    const bodyGeo = new THREE.CylinderGeometry(0.3, 0.3, 1.2, 8);
+    const bodyMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.5 });
+    const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+    rocket.add(bodyMesh);
+
+    // Nez de la fusée (Rouge/Rose)
+    const noseGeo = new THREE.ConeGeometry(0.3, 0.6, 8);
+    const noseMat = new THREE.MeshStandardMaterial({ color: '#ff0055', roughness: 0.3, metalness: 0.5 });
+    const noseMesh = new THREE.Mesh(noseGeo, noseMat);
+    noseMesh.position.y = 0.9;
+    rocket.add(noseMesh);
+
+    // Ailerons géométriques
+    const finGeo = new THREE.BoxGeometry(0.1, 0.4, 0.4);
+    const finMat = new THREE.MeshStandardMaterial({ color: '#ff0055', roughness: 0.5 });
+    const fin1 = new THREE.Mesh(finGeo, finMat); fin1.position.set(0.3, -0.4, 0);
+    const fin2 = new THREE.Mesh(finGeo, finMat); fin2.position.set(-0.3, -0.4, 0);
+    const fin3 = new THREE.Mesh(finGeo, finMat); fin3.position.set(0, -0.4, 0.3); fin3.rotation.y = Math.PI / 2;
+    const fin4 = new THREE.Mesh(finGeo, finMat); fin4.position.set(0, -0.4, -0.3); fin4.rotation.y = Math.PI / 2;
+    rocket.add(fin1, fin2, fin3, fin4);
+
+    // Aligner le "nez" de la fusée (+Y) avec l'axe avant (-Z) de son conteneur
+    rocket.rotation.x = -Math.PI / 2;
+    rocketContainer.add(rocket);
+    scene.add(rocketContainer);
 
     const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2(-10, -10); // par défaut en dehors de l'écran
+    const pointer = new THREE.Vector2(-10, -10); // par défaut en dehors
+    const targetRocketPos = new THREE.Vector3();
 
     let mouseX = 0;
     let mouseY = 0;
     window.addEventListener('mousemove', (e) => {
-      cursor.style.opacity = '1'; // Affiche le curseur dès qu'on bouge
-      targetCursorX = e.clientX;
-      targetCursorY = e.clientY;
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;   // -1 à 1
-      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;  // -1 à 1
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;   
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;  
 
-      // Mise à jour du raycaster
       pointer.x = mouseX;
       pointer.y = -mouseY;
     });
@@ -250,12 +264,25 @@
         mesh.position.y += Math.sin(t + offset) * 0.003;
       });
 
-      // Animation fluide du curseur personnalisé (approche + rotation)
-      currentCursorX += (targetCursorX - currentCursorX) * 0.35; // fluidité
-      currentCursorY += (targetCursorY - currentCursorY) * 0.35;
-      cursor.style.transform = `translate(${currentCursorX - 10}px, ${currentCursorY - 10}px) rotate(${t * 90}deg)`;
+      // ── Mouvement de la Fusée Curseur ──────────────────────────────
+      // On convertit le pointeur 2D en position 3D exacte devant la caméra (même inclinée)
+      const vector = new THREE.Vector3(pointer.x, pointer.y, 0.5);
+      vector.unproject(camera);
+      vector.sub(camera.position).normalize();
+      const distanceToCamera = 8; // La fusée vole à 8 unités devant l'objectif
+      
+      targetRocketPos.copy(camera.position).add(vector.multiplyScalar(distanceToCamera));
+      
+      // La fusée suit doucement le vrai pointeur (lerp spatial)
+      rocketContainer.position.lerp(targetRocketPos, 0.2);
+      
+      // La fusée "regarde" constamment en direction de la Terre (planète 2)
+      const earthWorldPos = new THREE.Vector3();
+      planets[2].mesh.getWorldPosition(earthWorldPos);
+      rocketContainer.lookAt(earthWorldPos);
 
-      renderer.render(scene, camera);
+      // Rendu avec le post-processing (glow effect) puiisqu'on n'utilise plus renderer.render
+      composer.render();
     }
     animate();
 
@@ -264,6 +291,7 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
     });
   </script>
 </body>
