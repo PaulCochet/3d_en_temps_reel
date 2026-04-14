@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
 
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from 'https://esm.sh/three@0.160.0';
+
+        // 1. La scène
+        const scene = new THREE.Scene();
+
+        // 2. La caméra
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 3;
+
+        // 3. Le renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Une grille 3x3 de sphères pour comparer roughness et metalness
+        const geometry = new THREE.SphereGeometry(0.4, 32, 32);
+
+        for (let x = 0; x < 3; x++) {
+            for (let y = 0; y < 3; y++) {
+                const material = new THREE.MeshStandardMaterial({
+                    color: '#c0c0c0',
+                    metalness: x / 2,      // 0, 0.5, 1
+                    roughness: y / 2,      // 0, 0.5, 1
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.set((x - 1) * 1.2, (y - 1) * 1.2, 0);
+                scene.add(sphere);
+            }
+        }
+        // 5. La lumière
+        const light = new THREE.DirectionalLight('#ffffff', 2);
+        light.position.set(2, 4, 3);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight('#ffffff', 0.3));
+
+        // 6. La boucle d'animation
+        function animate() {
+            requestAnimationFrame(animate);
+            // cube.rotation.x += 0.005; // Attention : "cube" n'existe pas dans le code !
+            // cube.rotation.y += 0.008;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 7. Responsive
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
