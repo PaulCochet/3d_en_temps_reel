@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SKYEXPERIENCE | Luxury Aerial Excellence</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(0, 31, 63, 0.15);
+            backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            border-left: 1px solid rgba(212, 175, 55, 0.05);
+        }
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            overflow-x: hidden;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        main {
+            position: relative;
+            z-index: 10;
+        }
+        .hotspot {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            color: #131313;
+            padding: 8px 14px;
+            border-radius: 20px;
+            pointer-events: all;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.3s ease;
+            transform: translate(-50%, -50%) scale(0.9);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            font-family: 'Manrope', sans-serif;
+        }
+        .hotspot.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .hotspot .title { font-weight: 800; font-size: 11px; text-transform: uppercase; line-height: 1; }
+        .hotspot .subtitle { font-weight: 500; font-size: 9px; opacity: 0.7; margin-top: 2px; }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary": "#e9c349",
+                      "background": "#131313",
+                      "primary-container": "#001f3f",
+                      "on-background": "#e5e2e1",
+                      "on-surface-variant": "#c4c6cf",
+              },
+              "spacing": {
+                      "margin-edge": "64px",
+                      "section-gap": "128px",
+                      "container-max": "1440px",
+                      "gutter": "32px",
+              },
+              "fontFamily": {
+                      "display-xl": ["Noto Serif"],
+                      "headline-lg": ["Noto Serif"],
+                      "body-lg": ["Manrope"],
+                      "body-md": ["Manrope"],
+                      "label-md": ["Manrope"]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md">
+    <canvas id="webgl"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 border-b border-white/10 bg-[#001F3F]/30 backdrop-blur-2xl flex justify-between items-center px-12 py-6 shadow-[0_20px_50px_rgba(0,31,63,0.15)]">
+        <div class="text-2xl font-serif tracking-[0.2em] text-amber-500 uppercase">SKYEXPERIENCE</div>
+        <div class="hidden md:flex items-center gap-12 font-serif text-sm uppercase tracking-widest">
+            <a class="text-amber-500 border-b-2 border-amber-500 pb-1" href="#">Experience</a>
+            <a class="text-white/80 hover:text-white transition-colors" href="#">Destinations</a>
+            <a class="text-white/80 hover:text-white transition-colors" href="#">Fleet</a>
+        </div>
+        <button class="bg-gradient-to-r from-[#af8d11] to-[#e9c349] text-black font-semibold px-8 py-3 rounded-full uppercase tracking-widest scale-95 active:scale-90 transition-transform">
+            Book Now
+        </button>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative min-h-screen flex flex-col items-center justify-center pt-32 px-margin-edge overflow-hidden">
+            <div class="relative z-10 text-center max-w-5xl mx-auto space-y-8">
+                <span class="text-amber-500 font-semibold uppercase tracking-[0.3em] text-sm">Supersonic Future</span>
+                <h1 class="font-display-xl text-6xl md:text-8xl text-on-background leading-none">
+                    The Art of <span class="text-secondary block">Aerial Excellence</span>
+                </h1>
+                <p class="font-body-lg text-lg text-on-surface-variant max-w-2xl mx-auto opacity-80 leading-relaxed">
+                    Transcending the ordinary boundaries of travel. Experience a curated journey where technical precision meets elite hospitality.
+                </p>
+                <div class="pt-8">
+                    <button class="glass-card px-10 py-5 rounded-full font-label-md text-secondary border border-secondary/30 hover:bg-secondary/10 transition-all duration-500 scale-95 active:scale-90">
+                        EXPLORE THE CABIN
+                    </button>
+                </div>
+            </div>
+            <!-- 3D Aircraft will appear here behind the text -->
+        </section>
+
+        <!-- Advantages Section -->
+        <section class="py-section-gap px-margin-edge max-w-container-max mx-auto">
+            <div class="text-center mb-24 space-y-4">
+                <span class="text-secondary font-label-md uppercase tracking-widest">Why Choose Us</span>
+                <h2 class="font-headline-lg text-5xl">Beyond First Class</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                <!-- Advantage 1 -->
+                <div class="glass-card p-12 rounded-xl border border-white/5 hover:border-secondary/30 transition-all duration-500 group">
+                    <span class="material-symbols-outlined text-secondary text-4xl mb-8 group-hover:scale-110 transition-transform block">verified_user</span>
+                    <h3 class="font-title-lg text-xl mb-4 text-on-surface">Unrivaled Privacy</h3>
+                    <p class="font-body-md text-on-surface-variant leading-relaxed opacity-70">Discrete terminals and soundproofed cabins designed for absolute confidentiality and peace.</p>
+                </div>
+                <!-- Advantage 2 -->
+                <div class="glass-card p-12 rounded-xl border border-white/5 hover:border-secondary/30 transition-all duration-500 group">
+                    <span class="material-symbols-outlined text-secondary text-4xl mb-8 group-hover:scale-110 transition-transform block">restaurant_menu</span>
+                    <h3 class="font-title-lg text-xl mb-4 text-on-surface">Michelin-Star Dining</h3>
+                    <p class="font-body-md text-on-surface-variant leading-relaxed opacity-70">A culinary journey at 40,000 feet, featuring seasonal ingredients and rare vintage pairings.</p>
+                </div>
+                <!-- Advantage 3 -->
+                <div class="glass-card p-12 rounded-xl border border-white/5 hover:border-secondary/30 transition-all duration-500 group">
+                    <span class="material-symbols-outlined text-secondary text-4xl mb-8 group-hover:scale-110 transition-transform block">public</span>
+                    <h3 class="font-title-lg text-xl mb-4 text-on-surface">Global Reach</h3>
+                    <p class="font-body-md text-on-surface-variant leading-relaxed opacity-70">Access over 5,000 exclusive airports worldwide, cutting your travel time in half with precision.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Zone -->
+        <section class="px-margin-edge py-section-gap">
+            <div class="relative w-full aspect-[21/9] rounded-3xl overflow-hidden border border-white/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+                <div class="absolute inset-0 bg-gradient-to-tr from-[#001F3F] via-background to-black opacity-90"></div>
+                <img class="w-full h-full object-cover mix-blend-overlay opacity-30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjZwyO5aJNM_PFjM0tP7eGyIW55kDePpCoB-niC7uI7tH62J_binFLuVnL-v7A4XRzhoDGbPUFf1rIJ-RFiiDomQQV0InljtA6MWHe_SX8C2dMANrTDZIfkR9jPJf8AJehkv1yy22yV-oTLtqjKh1XnT67VSCW93zxK2gtVkKK4sbabIQyIiDlG8qZL_aUs_vm9OxpgjjuBX4NxjJ6dIsa-lSU-DxU2XpfWyw0imcWz4uC5cVp8-ZCAKrOBmHhvK1p3Pb5SGpT2Ghj"/>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-12">
+                    <h2 class="font-headline-lg text-5xl mb-6 tracking-tight">The Horizon Awaits</h2>
+                    <p class="font-body-lg text-on-surface-variant max-w-xl mb-12 opacity-80">Interact with our fleet in a virtual 360-degree environment. Every detail matters.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-section-gap">
+            <div class="max-w-4xl mx-auto text-center px-6">
+                <div class="glass-card p-16 rounded-[2rem] border border-secondary/20 relative overflow-hidden">
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-secondary/5 blur-[100px] rounded-full"></div>
+                    <div class="relative z-10 space-y-8">
+                        <h2 class="font-display-xl text-5xl leading-tight">Ready for a <span class="text-secondary italic">Higher Standard?</span></h2>
+                        <button class="bg-secondary text-black font-bold px-16 py-6 rounded-full uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(212,175,55,0.2)] hover:shadow-secondary/40 transition-all duration-300">
+                            Book Your Journey
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Hotspots -->
+    <div class="hotspot" id="h1"><span class="title">Cockpit IA</span><span class="subtitle">Next-Gen Avionics</span></div>
+    <div class="hotspot" id="h2"><span class="title">Turbo-Engines</span><span class="subtitle">Mach 2.8 Capability</span></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+        // --- SETUP ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x131313);
+        scene.fog = new THREE.Fog(0x131313, 5, 25);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#webgl'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // --- LIGHTS ---
+        const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
+        light1.position.set(5, 5, 5);
+        scene.add(light1);
+
+        const light2 = new THREE.PointLight(0xe9c349, 1.2);
+        light2.position.set(-5, 2, 2);
+        scene.add(light2);
+
+        // --- TEXTURES ---
+        const texLoader = new THREE.TextureLoader();
+        const textureFloquage = texLoader.load('../Asset/Floquage.png');
+        const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
+        textureFloquage.colorSpace = THREE.SRGBColorSpace;
+        textureGrosseAile.colorSpace = THREE.SRGBColorSpace;
+
+        // --- MATERIALS ---
+        const matHull = new THREE.MeshStandardMaterial({ color: 0x2a4d6c, metalness: 0.6, roughness: 0.5, map: textureFloquage });
+        const matWings = new THREE.MeshStandardMaterial({ color: 0x1a3d5c, metalness: 0.3, roughness: 0.6, map: textureGrosseAile });
+        const matGold = new THREE.MeshStandardMaterial({ color: 0xe9c349, metalness: 0.9, roughness: 0.2 });
+
+        // --- MODEL ---
+        let model;
+        const loader = new OBJLoader();
+        loader.load('../Asset/Avion.obj', (obj) => {
+            model = obj;
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    const name = (child.name || "").toLowerCase();
+                    if (name.includes('avion') || name.includes('carcasse')) child.material = matHull;
+                    else if (name.includes('aile')) child.material = matWings;
+                    else child.material = matGold;
+                }
+            });
+            scene.add(model);
+        });
+
+        // --- ANIMATION ---
+        let scrollY = 0;
+        window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (model) {
+                model.rotation.y += 0.002;
+                model.position.y = Math.sin(Date.now() * 0.001) * 0.1;
+                
+                // Scroll effect
+                const t = scrollY / (document.body.scrollHeight - window.innerHeight);
+                camera.position.x = 4.5 + (t * -8);
+                camera.position.z = 7 + (t * -2);
+                camera.lookAt(0, 0, 0);
+
+                // Hotspots
+                const points = [
+                    { id: 'h1', pos: new THREE.Vector3(0.2, 1.2, -0.8) },
+                    { id: 'h2', pos: new THREE.Vector3(0.5, -0.4, 1.5) }
+                ];
+
+                points.forEach(p => {
+                    const el = document.getElementById(p.id);
+                    const worldPos = p.pos.clone().applyMatrix4(model.matrixWorld);
+                    const screenPos = worldPos.project(camera);
+                    const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+                    const y = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
+
+                    el.style.left = `${x}px`;
+                    el.style.top = `${y}px`;
+                    if (screenPos.z < 1 && t < 0.3) el.classList.add('visible');
+                    else el.classList.remove('visible');
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
