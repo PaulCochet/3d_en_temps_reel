@@ -250,10 +250,37 @@
         light3.position.set(0, -1, -5);
         scene.add(light3);
 
+        // --- TEXTURES ---
+        const texLoader = new THREE.TextureLoader();
+        const textureFloquage = texLoader.load('../Asset/Floquage.png');
+        const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
+        const texturePetiteAile = texLoader.load('../Asset/Aile_Petite.png');
+
+        // Correction des espaces de couleur pour Three.js r160+
+        [textureFloquage, textureGrosseAile, texturePetiteAile].forEach(t => {
+            t.colorSpace = THREE.SRGBColorSpace;
+        });
+
         // --- MATERIALS ---
         const materials = {
-            Hull: new THREE.MeshStandardMaterial({ color: 0x2a4d6c, metalness: 0.6, roughness: 0.5 }),
-            Wings: new THREE.MeshStandardMaterial({ color: 0x1a3d5c, metalness: 0.3, roughness: 0.6 }),
+            Hull: new THREE.MeshStandardMaterial({ 
+                color: 0x2a4d6c, 
+                metalness: 0.6, 
+                roughness: 0.5,
+                map: textureFloquage
+            }),
+            Wings: new THREE.MeshStandardMaterial({ 
+                color: 0x1a3d5c, 
+                metalness: 0.3, 
+                roughness: 0.6,
+                map: textureGrosseAile
+            }),
+            SmallWings: new THREE.MeshStandardMaterial({
+                color: 0x1a3d5c,
+                metalness: 0.3,
+                roughness: 0.6,
+                map: texturePetiteAile
+            }),
             Cockpit: new THREE.MeshPhysicalMaterial({ color: 0x1a4d7c, metalness: 0.1, roughness: 0.05, transparent: true, opacity: 0.8 }),
             Engines: new THREE.MeshStandardMaterial({ color: 0x0a0a0a, metalness: 0.95, roughness: 0.1, emissive: 0xff4400, emissiveIntensity: 0.2 }),
             Landing_Gear: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.7, roughness: 0.4 }),
@@ -269,13 +296,31 @@
                 if (child.isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
-                    const name = child.name.toLowerCase();
-                    if (name.includes('hull')) child.material = materials.Hull;
-                    else if (name.includes('wing')) child.material = materials.Wings;
-                    else if (name.includes('cockpit') || name.includes('verriere')) child.material = materials.Cockpit;
-                    else if (name.includes('engine') || name.includes('moteur')) child.material = materials.Engines;
-                    else if (name.includes('gear') || name.includes('train')) child.material = materials.Landing_Gear;
-                    else child.material = materials.Details;
+                    const name = (child.name || "").toLowerCase();
+                    const matName = (child.material && child.material.name) ? child.material.name.toLowerCase() : '';
+                    
+                    // Match by object name or material name
+                    if (name.includes('avion') || name.includes('carcasse') || matName.includes('carcasse')) {
+                        child.material = materials.Hull;
+                    } 
+                    else if (name.includes('grosse_aile') || matName.includes('grosse_aile') || matName.includes('wing')) {
+                        child.material = materials.Wings;
+                    }
+                    else if (name.includes('petitaile') || name.includes('petit') || matName.includes('petitaile')) {
+                        child.material = materials.SmallWings;
+                    }
+                    else if (name.includes('cockpit') || name.includes('verriere') || matName.includes('verriere')) {
+                        child.material = materials.Cockpit;
+                    }
+                    else if (name.includes('engine') || name.includes('moteur') || name.includes('réacteur') || matName.includes('réacteur') || matName.includes('pale')) {
+                        child.material = materials.Engines;
+                    }
+                    else if (name.includes('gear') || name.includes('train')) {
+                        child.material = materials.Landing_Gear;
+                    }
+                    else {
+                        child.material = materials.Details;
+                    }
                 }
             });
             scene.add(model);
