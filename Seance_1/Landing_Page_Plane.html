@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollux Air Line — Redéfinir l'Horizon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #ffffff;
+            color: #0d0d0d;
+            overflow-x: hidden;
+        }
+
+        /* ── Canvas 3D fixe, AU PREMIER PLAN ── */
+        canvas.webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* ── Navbar ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            padding: 28px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            mix-blend-mode: multiply;
+            /* S'adapte au fond blanc ET noir */
+        }
+
+        .nav-logo {
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #0d0d0d;
+        }
+
+        .nav-logo em {
+            color: #c9a84c;
+            font-style: normal;
+        }
+
+        .nav-cta {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 12px 28px;
+            border: 1.5px solid #0d0d0d;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #0d0d0d;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: #0d0d0d;
+            color: #fff;
+        }
+
+        /* ── Hero Section ── */
+        /* 300vh = beaucoup de place pour l'animation au scroll */
+        #hero {
+            position: relative;
+            height: 300vh;
+        }
+
+        /* Le contenu Hero est "sticky" : il reste en place pendant qu'on scrolle */
+        .hero-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0 10% 12%;
+            z-index: 10;
+            /* Sous le canvas (100) */
+            will-change: filter;
+            /* GPU-accéléré pour l'effet blur */
+        }
+
+        .hero-label {
+            font-size: 0.75rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #c9a84c;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: clamp(3.5rem, 8vw, 9rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -3px;
+            max-width: 800px;
+            margin-bottom: 32px;
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #666;
+            max-width: 480px;
+            line-height: 1.8;
+            margin-bottom: 48px;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: #0d0d0d;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .hero-btn:hover {
+            background: #c9a84c;
+            transform: translateY(-2px);
+        }
+
+        /* Indicateur scroll */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+
+        .scroll-hint-line {
+            width: 40px;
+            height: 1px;
+            background: #aaa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-hint-line::after {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: #c9a84c;
+            animation: slide 1.8s ease infinite;
+        }
+
+        @keyframes slide {
+            0% {
+                left: -100%
+            }
+
+            100% {
+                left: 100%
+            }
+        }
+
+        /* ── Sections après le Hero ── */
+        .content-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 10%;
+            border-top: 1px solid #eee;
+        }
+
+        .content-section:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .section-inner {
+            max-width: 600px;
+        }
+
+        .section-tag {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #c9a84c;
+            margin-bottom: 24px;
+        }
+
+        .section-inner h2 {
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 28px;
+        }
+
+        .section-inner p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #555;
+            line-height: 1.9;
+        }
+
+        /* ── Loader ── */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 1s ease;
+        }
+
+        .loader-brand {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+
+        .loader-brand em {
+            color: #c9a84c;
+            font-style: normal;
+        }
+
+        .loader-bar {
+            width: 220px;
+            height: 1px;
+            background: #eee;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: #c9a84c;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-brand">Pollux <em>✦</em> Air Line</div>
+        <div class="loader-bar">
+            <div class="loader-fill" id="loader-fill"></div>
+        </div>
+    </div>
+
+    <!-- Canvas 3D (fixe, premier plan) -->
+    <canvas class="webgl"></canvas>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-logo">Pollux <em>✦</em> Air</div>
+        <a href="#reservations" class="nav-cta">Réserver</a>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <section id="hero">
+        <div class="hero-sticky">
+            <div class="hero-label">Bienvenue à bord</div>
+            <h1>Redéfinir<br>l'Horizon.</h1>
+            <p class="hero-sub">
+                Une nouvelle ère pour l'aviation de prestige.<br>
+                Destinations d'exception, confort absolu.
+            </p>
+            <a href="#flotte" class="hero-btn">Embarquer →</a>
+            <div class="scroll-hint">
+                <div class="scroll-hint-line"></div>
+                Défiler
+            </div>
+        </div>
+    </section>
+
+    <!-- ── SECTIONS CONTENU ── -->
+    <section class="content-section" id="flotte">
+        <div class="section-inner">
+            <div class="section-tag">Technologie</div>
+            <h2>Conçu pour<br>Fendre l'Air</h2>
+            <p>Notre flotte de nouvelle génération repousse les limites de l'aérodynamisme. Chaque courbe est calculée,
+                chaque matériau sélectionné pour la performance absolue.</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="section-inner">
+            <div class="section-tag">Confort</div>
+            <h2>L'Espace<br>Autrement</h2>
+            <p>Votre cabine privée est un sanctuaire à 12 000 mètres d'altitude. Matériaux raffinés, lumière adaptative
+                et silence absolu redéfinissent l'idée du voyage.</p>
+        </div>
+    </section>
+
+    <section class="content-section" id="reservations">
+        <div class="section-inner">
+            <div class="section-tag">Réservation</div>
+            <h2>Votre Prochain<br>Envol</h2>
+            <p>Rejoignez l'élite de l'aviation de prestige. Un conseiller vous contacte sous 24 heures pour orchestrer
+                votre voyage sur-mesure.</p>
+        </div>
+    </section>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script type="module">
+        import * as THREE from 'https://esm.sh/three@0.160.0';
+        import { OBJLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/OBJLoader.js';
+        import { MTLLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/MTLLoader.js';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ── Scène Three.js ──────────────────────────────────────────────────────
+        const canvas = document.querySelector('.webgl');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 200);
+        camera.position.set(0, 0, 12);
+        scene.add(camera);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+        // ── Lumières ────────────────────────────────────────────────────────────
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        const sun = new THREE.DirectionalLight(0xffecd0, 3.0);
+        sun.position.set(6, 10, 8);
+        scene.add(sun);
+        const fill = new THREE.DirectionalLight(0xd0e0ff, 1.0);
+        fill.position.set(-8, -4, -6);
+        scene.add(fill);
+
+        // ── Groupe avion ────────────────────────────────────────────────────────
+        const planeGroup = new THREE.Group();
+        scene.add(planeGroup);
+
+        // Position de départ : centré X, haut de l'écran (Y positif = au-dessus),
+        // et suffisamment loin (Z) pour paraître petit
+        planeGroup.position.set(0, 6, 0);
+        planeGroup.scale.setScalar(0.12); // Commence petit
+        planeGroup.rotation.y = Math.PI; // Face caméra
+
+        // ── Chargement MTL + OBJ ────────────────────────────────────────────────
+        const loaderEl = document.getElementById('loader');
+        const fillEl = document.getElementById('loader-fill');
+
+        const mtlLoader = new MTLLoader();
+        mtlLoader.setPath('Asset/');
+        mtlLoader.load('Avion.mtl', (mats) => {
+            mats.preload();
+            const objLoader = new OBJLoader();
+            objLoader.setMaterials(mats);
+            objLoader.setPath('Asset/');
+            objLoader.load(
+                'Avion.obj',
+                (obj) => {
+                    // Centrage du modèle
+                    obj.scale.setScalar(0.45);
+                    const box = new THREE.Box3().setFromObject(obj);
+                    obj.position.sub(box.getCenter(new THREE.Vector3()));
+                    planeGroup.add(obj);
+
+                    // Fin du loader
+                    fillEl.style.width = '100%';
+                    setTimeout(() => {
+                        loaderEl.style.opacity = '0';
+                        setTimeout(() => {
+                            loaderEl.style.display = 'none';
+                            initScroll();
+                        }, 900);
+                    }, 300);
+                },
+                (xhr) => {
+                    if (xhr.lengthComputable)
+                        fillEl.style.width = Math.round(xhr.loaded / xhr.total * 100) + '%';
+                },
+                (e) => console.error(e)
+            );
+        });
+
+        // ── Animation Scroll ────────────────────────────────────────────────────
+        function initScroll() {
+
+
+            // 1. L'avion DESCEND depuis le haut vers le centre
+            gsap.to(planeGroup.position, {
+                y: 0,
+                ease: 'power1.inOut',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1.5,
+                }
+            });
+
+            // 2. L'avion GROSSIT jusqu'à couvrir tout l'écran
+            gsap.to(planeGroup.scale, {
+                x: 30, y: 30, z: 30,  // Assez grand pour déborder de partout
+                ease: 'power2.in',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1.5,
+                }
+            });
+
+            // 3. Légère inclinaison pendant la descente
+            gsap.to(planeGroup.rotation, {
+                x: 0.12,
+                ease: 'power1.inOut',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: '60% top',
+                    scrub: 2,
+                }
+            });
+
+            // 4. FLOU progressif sur le contenu hero (filter blur sur .hero-sticky)
+            const heroSticky = document.querySelector('.hero-sticky');
+            gsap.to(heroSticky, {
+                filter: 'blur(30px)',
+                scale: 1.04,          // Très léger zoom accompagnant le flou
+                ease: 'power1.in',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: '20% top',  // Démarre dès 20% du scroll — effet très progressif
+                    end: '80% top',    // Flou maximal bien avant la fin
+                    scrub: 1.5,
+                }
+            });
+
+            // 5. Canvas 3D s'efface une fois le hero passé
+            gsap.to(canvas, {
+                opacity: 0,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: '#flotte',
+                    start: 'top bottom',
+                    end: 'top 60%',
+                    scrub: 1,
+                }
+            });
+        } // fin initScroll()
+
+        // ── Boucle de rendu ─────────────────────────────────────────────────────
+        const clock = new THREE.Clock();
+        (function tick() {
+            const t = clock.getElapsedTime();
+            // Léger flottement sinusoïdal permanent
+            planeGroup.position.y += Math.sin(t * 0.9) * 0.002;
+            renderer.render(scene, camera);
+            requestAnimationFrame(tick);
+        })();
+
+        // ── Responsive ──────────────────────────────────────────────────────────
+        window.addEventListener('resize', () => {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+        });
+    </script>
+</body>
+
+</html>

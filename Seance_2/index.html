@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raycaster - Grille Interactive</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        h1 { margin: 0; font-size: 1.5rem; font-weight: 300; letter-spacing: 2px; }
+        p { opacity: 0.6; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>HEURE 1 : RAYCASTER</h1>
+        <p>Survolez les cubes pour les éclairer, cliquez pour les faire tourner.</p>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+
+        // SCENE SETUP
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 6;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        // LIGHTS (Premium feel)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xff3366, 150);
+        pointLight.position.set(0, 0, 5);
+        scene.add(pointLight);
+
+        // GRID OF CUBES
+        const cubes = [];
+        const rotatingCubes = new Set();
+        const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+        
+        const baseColor = 0x444444;
+        const hoverColor = 0xff3366;
+
+        for (let x = -2; x <= 2; x++) {
+            for (let y = -2; y <= 2; y++) {
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: baseColor,
+                    shininess: 100,
+                    specular: 0x111111
+                });
+                const cube = new THREE.Mesh(geometry, material);
+                cube.position.set(x * 1.2, y * 1.2, 0);
+                scene.add(cube);
+                cubes.push(cube);
+            }
+        }
+
+        // RAYCASTER & MOUSE
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        window.addEventListener('click', () => {
+            // Update raycaster before check
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(cubes);
+            
+            if (intersects.length > 0) {
+                const clickedCube = intersects[0].object;
+                if (rotatingCubes.has(clickedCube)) {
+                    rotatingCubes.delete(clickedCube);
+                } else {
+                    rotatingCubes.add(clickedCube);
+                }
+            }
+        });
+
+        // RESPONSIVE
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update Raycaster
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(cubes);
+
+            // Reset all colors
+            cubes.forEach(cube => {
+                cube.material.color.set(baseColor);
+            });
+
+            // Set hover color
+            if (intersects.length > 0) {
+                intersects[0].object.material.color.set(hoverColor);
+                // Move light slightly towards hover point for dynamic effect
+                pointLight.position.lerp(new THREE.Vector3(intersects[0].point.x, intersects[0].point.y, 2), 0.1);
+            }
+
+            // Animate rotating cubes
+            rotatingCubes.forEach(cube => {
+                cube.rotation.x += 0.05;
+                cube.rotation.y += 0.05;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
