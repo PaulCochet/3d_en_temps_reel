@@ -1,408 +1,347 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="fr">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SKYEXPERIENCE | Luxury Aerial Excellence</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-card {
-            background: rgba(0, 31, 63, 0.15);
-            backdrop-filter: blur(25px);
-            border-top: 1px solid rgba(212, 175, 55, 0.1);
-            border-left: 1px solid rgba(212, 175, 55, 0.05);
-        }
-        body {
-            background-color: #131313;
-            color: #e5e2e1;
-            overflow-x: hidden;
-        }
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-        main {
-            position: relative;
-            z-index: 10;
-        }
-        .hotspot {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.95);
-            color: #131313;
-            padding: 8px 14px;
-            border-radius: 20px;
-            pointer-events: all;
-            opacity: 0;
-            transition: opacity 0.5s ease, transform 0.3s ease;
-            transform: translate(-50%, -50%) scale(0.9);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            font-family: 'Manrope', sans-serif;
-        }
-        .hotspot.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        .hotspot .title { font-weight: 800; font-size: 11px; text-transform: uppercase; line-height: 1; }
-        .hotspot .subtitle { font-weight: 500; font-size: 9px; opacity: 0.7; margin-top: 2px; }
-    </style>
-    <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "secondary": "#e9c349",
-                      "background": "#131313",
-                      "primary-container": "#001f3f",
-                      "on-background": "#e5e2e1",
-                      "on-surface-variant": "#c4c6cf",
-              },
-              "spacing": {
-                      "margin-edge": "64px",
-                      "section-gap": "128px",
-                      "container-max": "1440px",
-                      "gutter": "32px",
-              },
-              "fontFamily": {
-                      "display-xl": ["Noto Serif"],
-                      "headline-lg": ["Noto Serif"],
-                      "body-lg": ["Manrope"],
-                      "body-md": ["Manrope"],
-                      "label-md": ["Manrope"]
-              }
-            },
-          },
-        }
-    </script>
+  <meta charset="UTF-8">
+  <title>SKYEXPERIENCE - Aviation Luxury</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white; 
+      overflow-x: hidden;
+    }
+    canvas { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      z-index: 0; 
+    }
+    main { position: relative; z-index: 1; }
+    section {
+      min-height: 100vh;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    section.left { 
+      align-items: flex-start; 
+      text-align: left;
+    }
+    section.right { 
+      align-items: flex-end; 
+      text-align: right;
+    }
+    h1 { 
+      font-size: 4.5rem; 
+      margin-bottom: 1rem; 
+      color: #d4af37;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+    h2 { 
+      font-size: 3rem; 
+      margin-bottom: 1rem;
+      color: #d4af37;
+      font-weight: 300;
+    }
+    p { 
+      font-size: 1.3rem; 
+      line-height: 1.8; 
+      opacity: 0.85;
+      max-width: 600px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 8px 20px;
+      border: 1px solid #d4af37;
+      border-radius: 30px;
+      color: #d4af37;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .cta {
+      display: inline-block;
+      padding: 14px 40px;
+      background: #d4af37;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-top: 2rem;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+    .cta:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+    .hotspot {
+      position: absolute;
+      background: rgba(212, 175, 55, 0.95);
+      color: #0a0a0a;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      transform: translate(-50%, -50%);
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+      z-index: 100;
+    }
+    .hotspot.visible { opacity: 1; }
+  </style>
 </head>
-<body class="bg-background text-on-background font-body-md">
-    <canvas id="webgl"></canvas>
+<body>
+  <main>
+    <section class="center">
+      <div class="badge">Supersonic Future</div>
+      <h1>The Art of Aerial Excellence</h1>
+      <p>Transcendez l'expérience ordinaire du voyage. Découvrez une nouvelle dimension du luxe en altitude.</p>
+      <button class="cta">Explore the Cabin</button>
+    </section>
+    
+    <section class="left">
+      <h2>Beyond First Class</h2>
+      <p>Intimité absolue. Confort sans compromis. Chaque détail pensé pour votre voyage parfait.</p>
+    </section>
+    
+    <section class="right">
+      <h2>The Horizon Awaits</h2>
+      <p>Découvrez nos destinations exclusives et nos services premium.</p>
+    </section>
 
-    <!-- Top Navigation Bar -->
-    <nav class="fixed top-0 w-full z-50 border-b border-white/10 bg-[#001F3F]/30 backdrop-blur-2xl flex justify-between items-center px-12 py-6 shadow-[0_20px_50px_rgba(0,31,63,0.15)]">
-        <div class="text-2xl font-serif tracking-[0.2em] text-amber-500 uppercase">SKYEXPERIENCE</div>
-        <div class="hidden md:flex items-center gap-12 font-serif text-sm uppercase tracking-widest">
-            <a class="text-amber-500 border-b-2 border-amber-500 pb-1" href="#">Experience</a>
-            <a class="text-white/80 hover:text-white transition-colors" href="#">Destinations</a>
-            <a class="text-white/80 hover:text-white transition-colors" href="#">Fleet</a>
-        </div>
-        <button class="bg-gradient-to-r from-[#af8d11] to-[#e9c349] text-black font-semibold px-8 py-3 rounded-full uppercase tracking-widest scale-95 active:scale-90 transition-transform">
-            Book Now
-        </button>
-    </nav>
+    <section class="center">
+      <h2>Ready for a Higher Standard?</h2>
+      <p>Réservez votre expérience exclusive dès maintenant.</p>
+      <button class="cta">Book Your Journey</button>
+    </section>
+  </main>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="relative min-h-screen flex flex-col items-center justify-center pt-32 px-margin-edge overflow-hidden">
-            <div class="relative z-10 text-center max-w-5xl mx-auto space-y-8">
-                <span class="text-amber-500 font-semibold uppercase tracking-[0.3em] text-sm">Supersonic Future</span>
-                <h1 class="font-display-xl text-6xl md:text-8xl text-on-background leading-none">
-                    The Art of <span class="text-secondary block">Aerial Excellence</span>
-                </h1>
-                <p class="font-body-lg text-lg text-on-surface-variant max-w-2xl mx-auto opacity-80 leading-relaxed">
-                    Transcending the ordinary boundaries of travel. Experience a curated journey where technical precision meets elite hospitality.
-                </p>
-                <div class="pt-8">
-                    <button class="glass-card px-10 py-5 rounded-full font-label-md text-secondary border border-secondary/30 hover:bg-secondary/10 transition-all duration-500 scale-95 active:scale-90">
-                        EXPLORE THE CABIN
-                    </button>
-                </div>
-            </div>
-            <!-- 3D Aircraft will appear here behind the text -->
-        </section>
+  <div class="hotspot" id="h1">Cockpit Premium</div>
+  <div class="hotspot" id="h2">Réacteurs Électriques</div>
 
-        <!-- Advantages Section -->
-        <section class="py-section-gap px-margin-edge max-w-container-max mx-auto">
-            <div class="text-center mb-24 space-y-4">
-                <span class="text-secondary font-label-md uppercase tracking-widest">Why Choose Us</span>
-                <h2 class="font-headline-lg text-5xl">Beyond First Class</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-                <!-- Advantage 1 -->
-                <div class="glass-card p-12 rounded-xl border border-white/5 hover:border-secondary/30 transition-all duration-500 group">
-                    <span class="material-symbols-outlined text-secondary text-4xl mb-8 group-hover:scale-110 transition-transform block">verified_user</span>
-                    <h3 class="font-title-lg text-xl mb-4 text-on-surface">Unrivaled Privacy</h3>
-                    <p class="font-body-md text-on-surface-variant leading-relaxed opacity-70">Discrete terminals and soundproofed cabins designed for absolute confidentiality and peace.</p>
-                </div>
-                <!-- Advantage 2 -->
-                <div class="glass-card p-12 rounded-xl border border-white/5 hover:border-secondary/30 transition-all duration-500 group">
-                    <span class="material-symbols-outlined text-secondary text-4xl mb-8 group-hover:scale-110 transition-transform block">restaurant_menu</span>
-                    <h3 class="font-title-lg text-xl mb-4 text-on-surface">Michelin-Star Dining</h3>
-                    <p class="font-body-md text-on-surface-variant leading-relaxed opacity-70">A culinary journey at 40,000 feet, featuring seasonal ingredients and rare vintage pairings.</p>
-                </div>
-                <!-- Advantage 3 -->
-                <div class="glass-card p-12 rounded-xl border border-white/5 hover:border-secondary/30 transition-all duration-500 group">
-                    <span class="material-symbols-outlined text-secondary text-4xl mb-8 group-hover:scale-110 transition-transform block">public</span>
-                    <h3 class="font-title-lg text-xl mb-4 text-on-surface">Global Reach</h3>
-                    <p class="font-body-md text-on-surface-variant leading-relaxed opacity-70">Access over 5,000 exclusive airports worldwide, cutting your travel time in half with precision.</p>
-                </div>
-            </div>
-        </section>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 
-        <!-- Experience Zone -->
-        <section class="px-margin-edge py-section-gap">
-            <div class="relative w-full aspect-[21/9] rounded-3xl overflow-hidden border border-white/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-                <div class="absolute inset-0 bg-gradient-to-tr from-[#001F3F] via-background to-black opacity-90"></div>
-                <img class="w-full h-full object-cover mix-blend-overlay opacity-30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjZwyO5aJNM_PFjM0tP7eGyIW55kDePpCoB-niC7uI7tH62J_binFLuVnL-v7A4XRzhoDGbPUFf1rIJ-RFiiDomQQV0InljtA6MWHe_SX8C2dMANrTDZIfkR9jPJf8AJehkv1yy22yV-oTLtqjKh1XnT67VSCW93zxK2gtVkKK4sbabIQyIiDlG8qZL_aUs_vm9OxpgjjuBX4NxjJ6dIsa-lSU-DxU2XpfWyw0imcWz4uC5cVp8-ZCAKrOBmHhvK1p3Pb5SGpT2Ghj"/>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-12">
-                    <h2 class="font-headline-lg text-5xl mb-6 tracking-tight">The Horizon Awaits</h2>
-                    <p class="font-body-lg text-on-surface-variant max-w-xl mb-12 opacity-80">Interact with our fleet in a virtual 360-degree environment. Every detail matters.</p>
-                </div>
-            </div>
-        </section>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
-        <!-- CTA -->
-        <section class="py-section-gap">
-            <div class="max-w-4xl mx-auto text-center px-6">
-                <div class="glass-card p-16 rounded-[2rem] border border-secondary/20 relative overflow-hidden">
-                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-secondary/5 blur-[100px] rounded-full"></div>
-                    <div class="relative z-10 space-y-8">
-                        <h2 class="font-display-xl text-5xl leading-tight">Ready for a <span class="text-secondary italic">Higher Standard?</span></h2>
-                        <button class="bg-secondary text-black font-bold px-16 py-6 rounded-full uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(212,175,55,0.2)] hover:shadow-secondary/40 transition-all duration-300">
-                            Book Your Journey
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+    // ========== SETUP SCENE ==========
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+    
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
+    
+    camera.position.set(0, 0, 6);
 
-    <!-- Hotspots -->
-    <!-- Hotspots interactifs -->
-    <div class="hotspot" id="h1">Cockpit Premium</div>
-    <div class="hotspot" id="h2">Moteur Supersonique</div>
+    // ========== MEILLEUR LIGHTING ==========
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    scene.add(ambientLight);
+    
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    keyLight.position.set(8, 10, 8);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 2048;
+    keyLight.shadow.mapSize.height = 2048;
+    scene.add(keyLight);
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
-    <script type="module">
-        import * as THREE from 'three';
-        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+    const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.6);
+    fillLight.position.set(-8, 5, -8);
+    scene.add(fillLight);
 
-        // --- CONFIGURATION DE LA SCÈNE ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x131313); // Fond sombre assorti au design Stitch
-        scene.fog = new THREE.Fog(0x131313, 5, 25);    // Brouillard pour donner de la profondeur
+    const backLight = new THREE.PointLight(0xd4af37, 0.8);
+    backLight.position.set(0, -5, -10);
+    scene.add(backLight);
 
-        // Caméra perspective (angle de vue, ratio, distance min/max)
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-        
-        // Rendu WebGL sur le canvas spécifié
-        const renderer = new THREE.WebGLRenderer({ 
-            canvas: document.querySelector('#webgl'), 
-            antialias: true, // Anti-aliasing pour des bords lisses
-            alpha: true      // Transparence autorisée
+    // ========== ASSETS LOADING ==========
+    const texLoader = new THREE.TextureLoader();
+    const textureFloquage = texLoader.load('../Asset/Floquage.png');
+    const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
+    textureFloquage.colorSpace = THREE.SRGBColorSpace;
+    textureGrosseAile.colorSpace = THREE.SRGBColorSpace;
+
+    const matHull = new THREE.MeshStandardMaterial({ color: 0x2a4d6c, metalness: 0.6, roughness: 0.5, map: textureFloquage });
+    const matWings = new THREE.MeshStandardMaterial({ color: 0x1a3d5c, metalness: 0.3, roughness: 0.6, map: textureGrosseAile });
+    const matGold = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.2 });
+
+    let airplane = null;
+    const loader = new OBJLoader();
+    loader.load('../Asset/Avion.obj', 
+      (obj) => {
+        airplane = obj;
+        airplane.traverse((node) => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+            const name = (node.name || "").toLowerCase();
+            if (name.includes('avion') || name.includes('carcasse')) node.material = matHull;
+            else if (name.includes('aile')) node.material = matWings;
+            else node.material = matGold;
+          }
         });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        scene.add(airplane);
+        console.log('✅ Modèle chargé !', airplane);
+      },
+      (progress) => {
+        const percent = (progress.loaded / progress.total * 100).toFixed(0);
+        console.log('📦 Chargement:', percent + '%');
+      },
+      (error) => {
+        console.error('❌ Erreur lors du chargement de l\'avion:', error);
+        // Solution de secours : Créer un cube de test doré pour ne pas avoir de scène vide
+        const geometry = new THREE.BoxGeometry(1.5, 0.5, 4); // Forme allongée comme un fuselage
+        const material = matGold;
+        airplane = new THREE.Mesh(geometry, material);
+        airplane.scale.set(3, 3, 3);
+        scene.add(airplane);
+        console.log('✅ Objet de secours (Cube) créé');
+      }
+    );
 
-        // --- ÉCLAIRAGE (Lighting) ---
-        // Lumière directionnelle principale (Soleil/Key Light)
-        const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
-        light1.position.set(5, 5, 5);
-        scene.add(light1);
+    // ========== ÉTATS SCROLL (4 STATES) ==========
+    const states = [
+      {
+        // HERO : Avion face frontale
+        position: { x: 0, y: 0.5, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        scale: 3,
+        cameraPos: { x: 0, y: 0, z: 6 }
+      },
+      {
+        // MIDDLE 1 : Commence à descendre et se tourner
+        position: { x: 1.5, y: -0.5, z: 1 },
+        rotation: { x: -0.15, y: Math.PI * 0.15, z: 0.1 },
+        scale: 3.2,
+        cameraPos: { x: 0.5, y: 0, z: 5.5 }
+      },
+      {
+        // MIDDLE 2 : Avion plongé et bien tourné (3/4 view)
+        position: { x: 2.5, y: -2, z: 2 },
+        rotation: { x: -0.4, y: Math.PI * 0.5, z: 0.2 },
+        scale: 3.5,
+        cameraPos: { x: 1, y: -1, z: 5 }
+      },
+      {
+        // FINAL : Avion presque de côté
+        position: { x: 3, y: -3, z: 3 },
+        rotation: { x: -0.5, y: Math.PI * 0.75, z: 0.3 },
+        scale: 3.5,
+        cameraPos: { x: 1.5, y: -1.5, z: 4.5 }
+      }
+    ];
 
-        // Lumière ponctuelle dorée pour l'ambiance luxe (Fill Light)
-        const light2 = new THREE.PointLight(0xe9c349, 1.2);
-        light2.position.set(-5, 2, 2);
-        scene.add(light2);
+    // ========== SCROLL TRACKING ==========
+    let scrollProgress = 0;
+    window.addEventListener('scroll', () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      scrollProgress = Math.min(window.scrollY / totalHeight, 1);
+    });
 
-        // --- CHARGEMENT DES TEXTURES ---
-        const texLoader = new THREE.TextureLoader();
-        const textureFloquage = texLoader.load('../Asset/Floquage.png');
-        const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
-        
-        // Correction de l'espace colorimétrique pour un rendu fidèle
-        textureFloquage.colorSpace = THREE.SRGBColorSpace;
-        textureGrosseAile.colorSpace = THREE.SRGBColorSpace;
+    // ========== UTILS ==========
+    function lerp(a, b, t) {
+      return a + (b - a) * Math.min(Math.max(t, 0), 1);
+    }
 
-        // --- MATÉRIAUX (PBR - Physically Based Rendering) ---
-        // Matériau pour le fuselage avec texture "Floquage"
-        const matHull = new THREE.MeshStandardMaterial({ 
-            color: 0x2a4d6c, 
-            metalness: 0.6, 
-            roughness: 0.5, 
-            map: textureFloquage 
-        });
-        
-        // Matériau pour les ailes
-        const matWings = new THREE.MeshStandardMaterial({ 
-            color: 0x1a3d5c, 
-            metalness: 0.3, 
-            roughness: 0.6, 
-            map: textureGrosseAile 
-        });
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
 
-        // Matériau doré pour les détails (moteurs, train d'atterrissage)
-        const matGold = new THREE.MeshStandardMaterial({ 
-            color: 0xe9c349, 
-            metalness: 0.9, 
-            roughness: 0.2 
-        });
+    // ========== ANIMATION LOOP ==========
+    function animate() {
+      requestAnimationFrame(animate);
 
-        // --- CHARGEMENT DU MODÈLE 3D (OBJ) ---
-        let model;
-        const loader = new OBJLoader();
-        loader.load('../Asset/Avion.obj', (obj) => {
-            model = obj;
-            
-            if (!model) return;
+      if (airplane) {
+        const totalStates = states.length - 1;
+        const stateIndex = scrollProgress * totalStates;
+        const currentStateIdx = Math.floor(stateIndex);
+        const nextStateIdx = Math.min(currentStateIdx + 1, states.length - 1);
+        const stateProgress = stateIndex - currentStateIdx;
 
-            // On parcourt tous les enfants du modèle pour appliquer les matériaux selon leurs noms
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    const name = (child.name || "").toLowerCase();
-                    const matName = (child.material && child.material.name) ? child.material.name.toLowerCase() : "";
+        const currentState = states[currentStateIdx];
+        const nextState = states[nextStateIdx];
+        const eased = easeInOutCubic(stateProgress);
 
-                    // Mapping intelligent des matériaux selon les noms d'objets ou de matériaux
-                    if (name.includes('avion') || name.includes('carcasse') || matName.includes('carcasse')) {
-                        child.material = matHull;
-                    } 
-                    else if (name.includes('aile') || matName.includes('aile')) {
-                        child.material = matWings;
-                    }
-                    else {
-                        child.material = matGold;
-                    }
-                    
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-            
-            scene.add(model);
-        }, undefined, (err) => {
-            console.error("Erreur lors du chargement de l'OBJ:", err);
-        });
+        // Position
+        airplane.position.x = lerp(airplane.position.x, lerp(currentState.position.x, nextState.position.x, eased), 0.1);
+        airplane.position.y = lerp(airplane.position.y, lerp(currentState.position.y, nextState.position.y, eased), 0.1);
+        airplane.position.z = lerp(airplane.position.z, lerp(currentState.position.z, nextState.position.z, eased), 0.1);
 
-        // --- ÉTATS D'ANIMATION CINÉMATIQUES (States) ---
-        const states = [
-            {
-                // État 1 : Hero - L'avion surgit du coin haut-gauche
-                position: { x: -7, y: 4, z: -3 },
-                rotation: { x: 0.3, y: 1.2, z: -0.7 },
-                scale: 0.9
-            },
-            {
-                // État 2 : Avantages - L'avion est centré, fier et massif
-                position: { x: 0, y: 0.1, z: 2.5 },
-                rotation: { x: 0.05, y: 1.57, z: 0 },
-                scale: 1.3
-            },
-            {
-                // État 3 : CTA - L'avion plonge vers le bas-droite avec élégance
-                position: { x: 5, y: -3, z: -1 },
-                rotation: { x: -0.4, y: 2.4, z: 0.3 },
-                scale: 0.7
-            }
-        ];
+        // Rotation
+        airplane.rotation.x = lerp(airplane.rotation.x, lerp(currentState.rotation.x, nextState.rotation.x, eased), 0.1);
+        airplane.rotation.y = lerp(airplane.rotation.y, lerp(currentState.rotation.y, nextState.rotation.y, eased), 0.1);
+        airplane.rotation.z = lerp(airplane.rotation.z, lerp(currentState.rotation.z, nextState.rotation.z, eased), 0.1);
 
-        // --- FONCTIONS D'INTERPOLATION (Lerp) ---
-        function lerp(a, b, t) {
-            return a + (b - a) * t;
-        }
+        // Scale
+        const targetScale = lerp(currentState.scale, nextState.scale, eased);
+        airplane.scale.set(
+          lerp(airplane.scale.x, targetScale, 0.1),
+          lerp(airplane.scale.y, targetScale, 0.1),
+          lerp(airplane.scale.z, targetScale, 0.1)
+        );
 
-        function lerpVector(v1, v2, t) {
-            return {
-                x: lerp(v1.x, v2.x, t),
-                y: lerp(v1.y, v2.y, t),
-                z: lerp(v1.z, v2.z, t)
-            };
-        }
+        // Caméra
+        camera.position.x = lerp(camera.position.x, lerp(currentState.cameraPos.x, nextState.cameraPos.x, eased), 0.05);
+        camera.position.y = lerp(camera.position.y, lerp(currentState.cameraPos.y, nextState.cameraPos.y, eased), 0.05);
+        camera.position.z = lerp(camera.position.z, lerp(currentState.cameraPos.z, nextState.cameraPos.z, eased), 0.05);
+        camera.lookAt(airplane.position);
 
-        // --- GESTION DU SCROLL ---
-        let scrollY = 0;
-        window.addEventListener('scroll', () => { 
-            scrollY = window.scrollY; 
-        });
+        // Hotspots
+        const worldPos = new THREE.Vector3();
+        airplane.getWorldPosition(worldPos);
+        const screenPos = worldPos.project(camera);
+        const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (screenPos.y * -0.5 + 0.5) * window.innerHeight;
 
-        // --- BOUCLE D'ANIMATION PRINCIPALE ---
-        function animate() {
-            requestAnimationFrame(animate);
+        const h1 = document.getElementById('h1');
+        const h2 = document.getElementById('h2');
+        h1.style.left = (x + 80) + 'px';
+        h1.style.top = (y - 120) + 'px';
+        h2.style.left = (x - 100) + 'px';
+        h2.style.top = (y + 100) + 'px';
 
-            if (model) {
-                // 1. Calcul du pourcentage de scroll total
-                const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const scrollProgress = Math.max(0, Math.min(1, scrollY / totalHeight));
+        const isVisible = Math.abs(screenPos.z) < 1.5;
+        h1.classList.toggle('visible', isVisible && scrollProgress > 0.05 && scrollProgress < 0.95);
+        h2.classList.toggle('visible', isVisible && scrollProgress > 0.05 && scrollProgress < 0.95);
+      }
 
-                // 2. Détermination de l'intervalle d'états
-                const totalStates = states.length - 1;
-                const stateIndex = scrollProgress * totalStates;
-                const currentState = Math.floor(stateIndex);
-                const nextState = Math.min(currentState + 1, states.length - 1);
-                const stateProgress = stateIndex - currentState;
+      renderer.render(scene, camera);
+    }
 
-                // 3. Interpolation des valeurs cibles entre les deux états
-                const targetPos = lerpVector(states[currentState].position, states[nextState].position, stateProgress);
-                const targetRot = lerpVector(states[currentState].rotation, states[nextState].rotation, stateProgress);
-                const targetScale = lerp(states[currentState].scale, states[nextState].scale, stateProgress);
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 
-                // 4. Application fluide avec amortissement (Inertia lerp)
-                model.position.x = lerp(model.position.x, targetPos.x, 0.08);
-                model.position.y = lerp(model.position.y, targetPos.y, 0.08);
-                model.position.z = lerp(model.position.z, targetPos.z, 0.08);
-
-                model.rotation.x = lerp(model.rotation.x, targetRot.x, 0.06);
-                model.rotation.y = lerp(model.rotation.y, targetRot.y, 0.06);
-                model.rotation.z = lerp(model.rotation.z, targetRot.z, 0.06);
-
-                const currentS = model.scale.x;
-                const finalS = lerp(currentS, targetScale, 0.08);
-                model.scale.set(finalS, finalS, finalS);
-
-                // 5. Rendu de la caméra
-                camera.lookAt(0, 0, 0);
-
-                // --- GESTION DES HOTSPOTS ---
-                const points = [
-                    { id: 'h1', pos: new THREE.Vector3(0.1, 1.3, -0.9) }, // Cockpit
-                    { id: 'h2', pos: new THREE.Vector3(0.6, -0.5, 1.8) }  // Moteur
-                ];
-
-                points.forEach(p => {
-                    const el = document.getElementById(p.id);
-                    if (!el) return;
-
-                    // Projection de la position 3D vers le plan 2D de l'écran
-                    const worldPos = p.pos.clone().applyMatrix4(model.matrixWorld);
-                    const screenPos = worldPos.project(camera);
-                    
-                    const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
-                    const y = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
-
-                    el.style.left = `${x}px`;
-                    el.style.top = `${y}px`;
-                    
-                    // Visibilité intelligente
-                    const isVisible = screenPos.z < 1 && scrollProgress > 0.15 && scrollProgress < 0.85;
-                    el.classList.toggle('visible', isVisible);
-                });
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // Gestion du redimensionnement
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        animate();
-    </script>
+    animate();
+  </script>
 </body>
 </html>
