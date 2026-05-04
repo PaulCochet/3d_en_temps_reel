@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS-9 | Supersonic Future</title>
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --accent-cyan: #00ff99;
+            --accent-orange: #ff6633;
+            --text-primary: #ffffff;
+            --font-main: 'Courier New', Courier, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        canvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 0; 
+        }
+
+        main { position: relative; z-index: 1; }
+
+        section {
+            min-height: 100vh;
+            padding: 10vh 8%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        section.right { align-items: flex-end; text-align: right; }
+        section.center { align-items: center; text-align: center; }
+
+        .content-box {
+            max-width: 700px;
+            pointer-events: all;
+        }
+
+        h1 { 
+            font-size: clamp(3rem, 10vw, 5.5rem); 
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-bottom: 5px;
+        }
+
+        .accent {
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            letter-spacing: 10px;
+            display: block;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 20px; color: var(--accent-orange); }
+
+        p { 
+            font-size: 1.1rem; 
+            line-height: 1.6; 
+            opacity: 0.8;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .features-list {
+            list-style: none;
+            font-size: 1rem;
+            line-height: 2;
+        }
+
+        .features-list li::before {
+            content: "> ";
+            color: var(--accent-cyan);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+            text-decoration: none;
+            font-weight: 800;
+            border-radius: 4px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 153, 0.6);
+            background: #fff;
+        }
+
+        /* Hotspots */
+        .hotspot {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--bg-dark);
+            padding: 10px 16px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            pointer-events: all;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.3s;
+            transform: translate(-50%, -50%) scale(0.9);
+            white-space: nowrap;
+            z-index: 100;
+            cursor: crosshair;
+        }
+
+        .hotspot.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .hotspot:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 153, 0.6);
+            background: #f0f0f0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            section { padding: 5vh 5%; }
+            .hotspot { padding: 12px 20px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="webgl"></canvas>
+
+    <main>
+        <section id="hero">
+            <div class="content-box">
+                <span class="accent">SUPERSONIC</span>
+                <h1>NEXUS-9</h1>
+                <p>L'avenir du vol. Vitesse, efficacité, innovation sans limites.</p>
+            </div>
+        </section>
+
+        <section id="features" class="right">
+            <div class="content-box">
+                <h2>INGÉNIERIE<br>SUPÉRIEURE</h2>
+                <ul class="features-list">
+                    <li>Moteurs triple-turbine 12000 RPM</li>
+                    <li>Revêtement composites anti-radiation</li>
+                    <li>Aérodynamique optimisée Mach 2.8</li>
+                    <li>Autonomie : 18,000 km sans escale</li>
+                    <li>Cockpit IA-assisté</li>
+                    <li>Poids : 45 tonnes (record)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cta" class="center">
+            <div class="content-box">
+                <h2>PRÊT À<br>DÉCOLLER ?</h2>
+                <p>Précommande ouverte. À partir de $2.8M</p>
+                <a href="#" class="cta-button">COMMANDER MAINTENANT</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Labels HTML -->
+    <div class="hotspot" id="h1">Cockpit Intelligente</div>
+    <div class="hotspot" id="h2">Moteurs Hypersoniques</div>
+    <div class="hotspot" id="h3">Ailes Adaptatrices</div>
+    <div class="hotspot" id="h4">Réacteur Fusion</div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+        // --- CONFIGURATION ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+        scene.fog = new THREE.Fog(0x0a0a0a, 5, 25);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#webgl'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+
+        // --- LIGHTS ---
+        const light1 = new THREE.DirectionalLight(0xffffff, 1.3);
+        light1.position.set(5, 3, 4);
+        light1.castShadow = true;
+        light1.shadow.mapSize.set(2048, 2048);
+        scene.add(light1);
+
+        const light2 = new THREE.PointLight(0x00ff99, 0.7);
+        light2.position.set(-4, 2, -3);
+        scene.add(light2);
+
+        const light3 = new THREE.DirectionalLight(0x1a4d7c, 0.4);
+        light3.position.set(0, -1, -5);
+        scene.add(light3);
+
+        // --- MATERIALS ---
+        const materials = {
+            Hull: new THREE.MeshStandardMaterial({ color: 0x2a4d6c, metalness: 0.6, roughness: 0.5 }),
+            Wings: new THREE.MeshStandardMaterial({ color: 0x1a3d5c, metalness: 0.3, roughness: 0.6 }),
+            Cockpit: new THREE.MeshPhysicalMaterial({ color: 0x1a4d7c, metalness: 0.1, roughness: 0.05, transparent: true, opacity: 0.8 }),
+            Engines: new THREE.MeshStandardMaterial({ color: 0x0a0a0a, metalness: 0.95, roughness: 0.1, emissive: 0xff4400, emissiveIntensity: 0.3 }),
+            Landing_Gear: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.7, roughness: 0.4 }),
+            Details: new THREE.MeshStandardMaterial({ color: 0xff6633, metalness: 0.4, roughness: 0.5 })
+        };
+
+        // --- MODEL LOADING ---
+        let model;
+        const loader = new OBJLoader();
+        loader.load('../Asset/Avion.obj', (obj) => {
+            model = obj;
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    
+                    // Match material based on mesh name
+                    const name = child.name.toLowerCase();
+                    if (name.includes('hull')) child.material = materials.Hull;
+                    else if (name.includes('wing')) child.material = materials.Wings;
+                    else if (name.includes('cockpit')) child.material = materials.Cockpit;
+                    else if (name.includes('engine')) child.material = materials.Engines;
+                    else if (name.includes('gear')) child.material = materials.Landing_Gear;
+                    else child.material = materials.Details;
+                }
+            });
+            scene.add(model);
+        });
+
+        // --- KEYFRAMES ---
+        const keyframes = [
+            { pos: { x: 4.5, y: 2, z: 7 }, fov: 50, rotSpeed: 0.003, l1: 1.2, l2: 0.5 },
+            { pos: { x: 0, y: 3, z: 3.5 }, fov: 60, rotSpeed: 0.006, l1: 1.4, l2: 0.8 },
+            { pos: { x: -3, y: 1.5, z: 6.5 }, fov: 48, rotSpeed: 0.001, l1: 1.0, l2: 0.6 }
+        ];
+
+        const hotspots = [
+            { id: 'h1', pos: new THREE.Vector3(0.2, 1.2, -0.8), threshold: 0 },
+            { id: 'h2', pos: new THREE.Vector3(0.5, -0.4, 1.5), threshold: 0 },
+            { id: 'h3', pos: new THREE.Vector3(2.2, 0.3, 0.2), threshold: 0.4 },
+            { id: 'h4', pos: new THREE.Vector3(-0.6, -0.3, 1.8), threshold: 0.6 }
+        ];
+
+        // --- SCROLL & INTERPOLATION ---
+        let scrollY = 0;
+        let currentScroll = 0;
+        window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+        function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Smooth Scroll (lerp)
+            currentScroll += (scrollY - currentScroll) * 0.08;
+            const progress = currentScroll / (document.body.scrollHeight - window.innerHeight);
+            const t = Math.max(0, Math.min(1, progress));
+
+            // Camera Keyframe Interpolation
+            const kfIndex = Math.floor(t * (keyframes.length - 1));
+            const kfProgress = (t * (keyframes.length - 1)) % 1;
+            const easeProgress = easeOutCubic(kfProgress);
+
+            const k1 = keyframes[kfIndex];
+            const k2 = keyframes[kfIndex + 1] || k1;
+
+            if (k1 && k2) {
+                camera.position.x = k1.pos.x + (k2.pos.x - k1.pos.x) * easeProgress;
+                camera.position.y = k1.pos.y + (k2.pos.y - k1.pos.y) * easeProgress;
+                camera.position.z = k1.pos.z + (k2.pos.z - k1.pos.z) * easeProgress;
+                
+                camera.fov = k1.fov + (k2.fov - k1.fov) * easeProgress;
+                camera.updateProjectionMatrix();
+
+                light1.intensity = k1.l1 + (k2.l1 - k1.l1) * easeProgress;
+                light2.intensity = k1.l2 + (k2.l2 - k1.l2) * easeProgress;
+            }
+            camera.lookAt(0, 0.5, 0);
+
+            // Model Animation
+            if (model) {
+                const currentRotSpeed = k1.rotSpeed + (k2.rotSpeed - k1.rotSpeed) * easeProgress;
+                model.rotation.y += currentRotSpeed;
+                
+                // Hotspots update
+                hotspots.forEach(h => {
+                    const el = document.getElementById(h.id);
+                    if (t >= h.threshold) {
+                        const worldPos = h.pos.clone().applyMatrix4(model.matrixWorld);
+                        const screenPos = worldPos.project(camera);
+
+                        const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+                        const y = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
+
+                        el.style.left = `${x}px`;
+                        el.style.top = `${y}px`;
+                        
+                        if (screenPos.z < 1) el.classList.add('visible');
+                        else el.classList.remove('visible');
+                    } else {
+                        el.classList.remove('visible');
+                    }
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
