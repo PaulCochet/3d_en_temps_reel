@@ -425,10 +425,6 @@
     loader.load('../Asset/Avion.obj', (obj) => {
       airplane = obj;
 
-      // Initialisation très haut pour l'animation d'arrivée (Drop in)
-      airplane.scale.set(3.5, 3.5, 3.5);
-      airplane.position.set(0, 15, 0);
-
       airplane.traverse((node) => {
         if (node.isMesh) {
           node.castShadow = true;
@@ -445,7 +441,22 @@
         }
       });
 
-      // On garde la position d'origine du modèle
+      // Centrage PARFAIT de la géométrie (AVANT tout scale ou positionnement !)
+      const box = new THREE.Box3().setFromObject(airplane);
+      const center = box.getCenter(new THREE.Vector3());
+      airplane.traverse((node) => {
+        if (node.isMesh) {
+          node.geometry.translate(-center.x, -center.y, -center.z);
+        }
+      });
+
+      // On sauvegarde la vraie taille d'origine (non scalée)
+      window.airplaneSize = new THREE.Vector3();
+      new THREE.Box3().setFromObject(airplane).getSize(window.airplaneSize);
+
+      // SEULEMENT MAINTENANT, on scale et on positionne
+      airplane.scale.set(3.0, 3.0, 3.0); // Réduit à 3.0 comme demandé
+      airplane.position.set(0, 15, 0);
 
       scene.add(airplane);
       modelLoaded = true;
@@ -458,32 +469,32 @@
     // ========== SCROLL STATES ==========
     const states = [
       {
-        // ÉTAT 1 : Hero (De face)
+        // ÉTAT 1 : Hero (De face, rotation 180° pour voir le nez)
         position: { x: 0, y: -0.5, z: 0 },
-        rotation: { x: 0.1, y: 0, z: 0 },
-        scale: 3.5,
+        rotation: { x: 0.1, y: Math.PI, z: 0 },
+        scale: 3.0,
         cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
         // ÉTAT 2 : Story (Passe derrière)
         position: { x: 0, y: 0, z: -4 },
-        rotation: { x: 0.2, y: 0.5, z: -0.1 },
-        scale: 2.0,
+        rotation: { x: 0.2, y: Math.PI + 0.5, z: -0.1 },
+        scale: 1.8,
         cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
         // ÉTAT 3 : Zoom Hotspots
         position: { x: 0, y: 0, z: 0 },
-        rotation: { x: 0.1, y: Math.PI / 2, z: 0 },
-        scale: 5.5, // Zoom énorme pour bien voir les détails
+        rotation: { x: 0.1, y: Math.PI + (Math.PI / 2), z: 0 },
+        scale: 4.5, // Réduit légèrement
         cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
         // ÉTAT 4 : Final Focus (Au centre)
         position: { x: 0, y: 0.5, z: 0 },
-        rotation: { x: 0.1, y: -0.2, z: 0 },
+        rotation: { x: 0.1, y: Math.PI - 0.2, z: 0 },
         scale: 3.5,
-        cameraPos: { x: 0, y: 0, z: 0 }
+        cameraPos: { x: 0, y: 0, z: 7 }
       }
     ];
 
@@ -498,9 +509,23 @@
     function updateHotspots() {
       if (!airplane || !modelLoaded) return;
 
-      // Définition de points locaux 3D pour suivre le modèle exactement
-      const detail1Local = new THREE.Vector3(0, 0, 1.5);
-      const detail2Local = new THREE.Vector3(0, 0, -1.5);
+      // Placement DYNAMIQUE basé sur la vraie taille de l'avion
+      // On suppose que l'avion est orienté selon l'axe Z ou X
+      const size = window.airplaneSize || new THREE.Vector3(3, 3, 3);
+      const isZLonger = size.z > size.x;
+      const offset = (isZLonger ? size.z : size.x) * 0.45; // 45% de la longueur du centre
+
+      const detail1Local = new THREE.Vector3(0, 0, 0);
+      const detail2Local = new THREE.Vector3(0, 0, 0);
+      
+      // On inverse l'offset car le modèle a été exporté à l'envers (rotation de 180°)
+      if (isZLonger) {
+        detail1Local.z = -offset; // Nez
+        detail2Local.z = offset;  // Queue
+      } else {
+        detail1Local.x = -offset;
+        detail2Local.x = offset;
+      }
 
       const detail1World = detail1Local.applyMatrix4(airplane.matrixWorld);
       const detail2World = detail2Local.applyMatrix4(airplane.matrixWorld);
@@ -523,9 +548,9 @@
       h2.style.left = x2 + 'px';
       h2.style.top = y2 + 'px';
 
-      // Visibles s'ils ne sont pas derrière la caméra
-      h1.classList.toggle('visible', Math.abs(pos1.z) <= 1.0);
-      h2.classList.toggle('visible', Math.abs(pos2.z) <= 1.0);
+      // On force la visibilité pour être 100% sûr qu'ils apparaissent
+      h1.classList.add('visible');
+      h2.classList.add('visible');
     }
 
     // ========== LERP UTILITIES ==========
