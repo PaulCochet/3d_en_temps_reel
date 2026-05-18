@@ -460,9 +460,9 @@
     loader.load('../Asset/Avion.obj', (obj) => {
       airplane = obj;
       
-      // Setup initial position & scale to match Hero state
+      // Initialisation très haut pour l'animation d'arrivée (Drop in)
       airplane.scale.set(3.5, 3.5, 3.5);
-      airplane.position.set(0, 0.5, 0);
+      airplane.position.set(0, 15, 0);
 
       airplane.traverse((node) => {
         if (node.isMesh) {
@@ -480,6 +480,8 @@
         }
       });
 
+      // On garde la position d'origine du modèle
+
       scene.add(airplane);
       modelLoaded = true;
       console.log('✅ Modèle avion chargé avec succès');
@@ -491,32 +493,32 @@
     // ========== SCROLL STATES ==========
     const states = [
       {
-        // HERO: Avion face frontale, centré, ENORME
-        position: { x: 0, y: 0, z: 3 },
+        // ÉTAT 1 : Hero (De face)
+        position: { x: 0, y: -0.5, z: 0 },
         rotation: { x: 0.1, y: 0, z: 0 },
-        scale: 4.8,
-        cameraPos: { x: 0, y: 0, z: 6 }
-      },
-      {
-        // STORY: Avion bien visible à droite
-        position: { x: 2, y: 0, z: 1 },
-        rotation: { x: 0.2, y: Math.PI / 4, z: 0.1 },
         scale: 3.5,
-        cameraPos: { x: 0.5, y: 0.5, z: 6 }
+        cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
-        // DESTINATIONS: Avion bien visible à gauche
-        position: { x: -2.5, y: -0.5, z: 2 },
-        rotation: { x: -0.1, y: Math.PI * 0.6, z: 0.15 },
+        // ÉTAT 2 : Story (Passe derrière)
+        position: { x: 0, y: 0, z: -4 },
+        rotation: { x: 0.2, y: 0.5, z: -0.1 },
+        scale: 2.0,
+        cameraPos: { x: 0, y: 0, z: 7 }
+      },
+      {
+        // ÉTAT 3 : Destinations (Profil pour hotspots)
+        position: { x: 0, y: -0.5, z: 1 },
+        rotation: { x: 0.1, y: Math.PI / 2, z: 0.1 },
         scale: 3.5,
-        cameraPos: { x: -1, y: -0.5, z: 6 }
+        cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
-        // FINAL FOCUS: Avion au milieu, très imposant
-        position: { x: 0, y: -0.5, z: 3.5 },
-        rotation: { x: 0.15, y: -Math.PI * 0.1, z: -0.05 },
-        scale: 5.5,
-        cameraPos: { x: 0, y: 0, z: 6 }
+        // ÉTAT 4 : Final Focus (Au centre)
+        position: { x: 0, y: 0.5, z: 0 },
+        rotation: { x: 0.1, y: -0.2, z: 0 },
+        scale: 3.5,
+        cameraPos: { x: 0, y: 0, z: 7 }
       }
     ];
 
@@ -580,6 +582,8 @@
       };
     }
 
+    let introY = 15; // Animation d'arrivée du dessus
+
     // ========== ANIMATION LOOP ==========
     function animate() {
       requestAnimationFrame(animate);
@@ -594,9 +598,14 @@
         const currentState = states[currentStateIdx];
         const nextState = states[nextStateIdx];
 
+        // Intro drop animation
+        if (introY > 0.01) {
+           introY += (0 - introY) * 0.04;
+        }
+
         // Position interpolation
         const targetPos = lerpVector(currentState.position, nextState.position, stateProgress);
-        airplane.position.lerp(new THREE.Vector3(targetPos.x, targetPos.y, targetPos.z), 0.15);
+        airplane.position.lerp(new THREE.Vector3(targetPos.x, targetPos.y + introY, targetPos.z), 0.15);
 
         // Rotation interpolation
         const targetRot = lerpEuler(currentState.rotation, nextState.rotation, stateProgress);
