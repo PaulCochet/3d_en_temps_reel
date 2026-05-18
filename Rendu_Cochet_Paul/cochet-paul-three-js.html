@@ -548,8 +548,8 @@
     const texLoader = new THREE.TextureLoader();
 
     // Charger les textures
-    const textureFloquage = texLoader.load('../Asset/Floquage.png');
-    const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
+    const textureFloquage = texLoader.load('Asset/Floquage.png');
+    const textureGrosseAile = texLoader.load('Asset/Grosse_aile.png');
     textureFloquage.colorSpace = THREE.SRGBColorSpace;
     textureGrosseAile.colorSpace = THREE.SRGBColorSpace;
 
@@ -578,7 +578,7 @@
     let airplane = null;
     let modelLoaded = false;
 
-    loader.load('../Asset/Avion.obj', (obj) => {
+    loader.load('Asset/Avion.obj', (obj) => {
       airplane = obj;
 
       airplane.traverse((node) => {
