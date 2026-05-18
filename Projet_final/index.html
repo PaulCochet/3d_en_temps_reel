@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkyExperience - Luxury Aviation</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600&display=swap');
     :root {
       --primary: #0EA5E9;
       --primary-dark: #0284C7;
@@ -56,7 +57,9 @@
     }
 
     section.hero {
-      text-align: center;
+      text-align: left;
+      align-items: flex-start;
+      padding-left: 10%;
     }
 
     section.story {
@@ -111,12 +114,16 @@
     .hero-content {
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      text-align: right;
+      align-items: flex-start;
+      text-align: left;
       width: 100%;
       max-width: 600px;
-      margin-left: auto;
+      margin-right: auto;
       z-index: 2;
+    }
+
+    h1, h2, h3, .hero-title-bg {
+      font-family: 'Playfair Display', serif;
     }
 
     h1 {
@@ -320,13 +327,14 @@
 </head>
 
 <body>
+  <h1 class="hero-title-bg">SKYEXPERIENCE</h1>
   <main>
     <!-- ===== HERO ===== -->
     <section class="hero">
-      <h1 class="hero-title-bg">BEYOND THE HORIZON</h1>
       <div class="hero-content">
         <div class="badge">Premium Aviation Experience</div>
-        <p class="subtitle" style="text-align: right;">
+        <h2>Beyond the Horizon</h2>
+        <p class="subtitle">
           Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien
           avec des services exclusifs, une technologie de pointe et une attention sans pareil.
         </p>
@@ -504,28 +512,28 @@
       {
         // ÉTAT 1 : Hero (De face, rotation 180° pour voir le nez)
         position: { x: 0, y: -0.5, z: 0 },
-        rotation: { x: 0.1, y: Math.PI, z: 0 },
+        rotation: { x: 0.1, y: 0, z: 0 },
         scale: 1.5,
         cameraPos: { x: 0, y: 0, z: 10 }
       },
       {
         // ÉTAT 2 : Story (Passe derrière)
         position: { x: 0, y: 0, z: -4 },
-        rotation: { x: 0.2, y: Math.PI + 0.5, z: -0.1 },
+        rotation: { x: 0.2, y: 0.5, z: -0.1 },
         scale: 1.0,
         cameraPos: { x: 0, y: 0, z: 10 }
       },
       {
         // ÉTAT 3 : Zoom Hotspots
         position: { x: 0, y: 0, z: 0 },
-        rotation: { x: 0.1, y: Math.PI + (Math.PI / 2), z: 0 },
+        rotation: { x: 0.1, y: Math.PI / 2, z: 0 },
         scale: 2.5,
         cameraPos: { x: 0, y: 0, z: 8 }
       },
       {
         // ÉTAT 4 : Final Focus (Au centre)
         position: { x: 0, y: 0.5, z: 0 },
-        rotation: { x: 0.1, y: Math.PI - 0.2, z: 0 },
+        rotation: { x: 0.1, y: -0.2, z: 0 },
         scale: 3.5,
         cameraPos: { x: 0, y: 0, z: 7 }
       }
@@ -551,13 +559,13 @@
       const detail1Local = new THREE.Vector3(0, 0, 0);
       const detail2Local = new THREE.Vector3(0, 0, 0);
       
-      // Hotspots fixés dynamiquement (inversés à cause de la rotation 180°)
+      // Hotspots fixés dynamiquement
       if (isZLonger) {
-        detail1Local.z = -offset * 0.9; // Nez (légèrement en retrait pour éviter de flotter)
-        detail2Local.z = offset * 0.9;  // Queue
+        detail1Local.z = offset * 0.9;   // Nez
+        detail2Local.z = -offset * 0.9;  // Queue
       } else {
-        detail1Local.x = -offset * 0.9;
-        detail2Local.x = offset * 0.9;
+        detail1Local.x = offset * 0.9;
+        detail2Local.x = -offset * 0.9;
       }
 
       const detail1World = detail1Local.applyMatrix4(airplane.matrixWorld);
@@ -581,9 +589,10 @@
       h2.style.left = x2 + 'px';
       h2.style.top = y2 + 'px';
 
-      // On force la visibilité pour être 100% sûr qu'ils apparaissent
-      h1.classList.add('visible');
-      h2.classList.add('visible');
+      // Visibles uniquement lors de l'État 3 (le zoom de profil)
+      const isNearState3 = scrollProgress > 0.45 && scrollProgress < 0.85;
+      h1.classList.toggle('visible', isNearState3);
+      h2.classList.toggle('visible', isNearState3);
     }
 
     // ========== LERP UTILITIES ==========
