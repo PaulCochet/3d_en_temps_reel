@@ -2,138 +2,433 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>SKYEXPERIENCE - Aviation Luxury</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyExperience - Luxury Aviation</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: 'Segoe UI', sans-serif; 
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      color: white; 
+    :root {
+      --primary: #0EA5E9;
+      --primary-dark: #0284C7;
+      --white: #F5F5F5;
+      --dark: #0F172A;
+      --gray: #1E293B;
+      --text-light: #CBD5E1;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, #1a2847 100%);
+      color: var(--white);
       overflow-x: hidden;
     }
-    canvas { 
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      z-index: 0; 
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      display: block;
     }
-    main { position: relative; z-index: 1; }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
     section {
       min-height: 100vh;
-      padding: 4rem 2rem;
+      padding: 6rem 2rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+    }
+
+    section.hero {
       text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
     }
-    section.left { 
-      align-items: flex-start; 
-      text-align: left;
+
+    section.story {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(10px);
     }
-    section.right { 
-      align-items: flex-end; 
-      text-align: right;
+
+    section.destinations {
+      background: rgba(15, 23, 42, 0.4);
     }
-    h1 { 
-      font-size: 4.5rem; 
-      margin-bottom: 1rem; 
-      color: #d4af37;
-      font-weight: 300;
-      letter-spacing: 2px;
+
+    section.pricing {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(10px);
     }
-    h2 { 
-      font-size: 3rem; 
-      margin-bottom: 1rem;
-      color: #d4af37;
-      font-weight: 300;
-    }
-    p { 
-      font-size: 1.3rem; 
-      line-height: 1.8; 
-      opacity: 0.85;
-      max-width: 600px;
-    }
+
+    /* ===== TYPOGRAPHY ===== */
     .badge {
       display: inline-block;
-      padding: 8px 20px;
-      border: 1px solid #d4af37;
-      border-radius: 30px;
-      color: #d4af37;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      margin-bottom: 2rem;
+      padding: 10px 24px;
+      border: 1.5px solid var(--primary);
+      border-radius: 50px;
+      color: var(--primary);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
       text-transform: uppercase;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
     }
+
+    .badge:hover {
+      background: var(--primary);
+      color: var(--dark);
+    }
+
+    h1 {
+      font-size: 5rem;
+      font-weight: 300;
+      letter-spacing: -1px;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--white) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      font-size: 3.5rem;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: var(--text-light);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+
     .cta {
       display: inline-block;
-      padding: 14px 40px;
-      background: #d4af37;
-      color: #0a0a0a;
+      padding: 16px 48px;
+      background: var(--primary);
+      color: var(--dark);
       border: none;
-      border-radius: 30px;
+      border-radius: 50px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 1px;
       cursor: pointer;
-      margin-top: 2rem;
-      transition: all 0.3s ease;
       text-transform: uppercase;
+      margin-top: 2rem;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.3);
     }
+
     .cta:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 30px 60px rgba(14, 165, 233, 0.4);
     }
+
+    .cta:active {
+      transform: translateY(-1px);
+    }
+
+    /* ===== HOTSPOTS ===== */
     .hotspot {
       position: absolute;
-      background: rgba(212, 175, 55, 0.95);
-      color: #0a0a0a;
-      padding: 10px 16px;
-      border-radius: 20px;
+      background: var(--primary);
+      color: var(--dark);
+      padding: 12px 18px;
+      border-radius: 30px;
       font-size: 12px;
+      font-weight: 700;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.3s ease;
       transform: translate(-50%, -50%);
-      font-weight: 600;
       white-space: nowrap;
-      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
-      z-index: 100;
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
-    .hotspot.visible { opacity: 1; }
+
+    .hotspot.visible {
+      opacity: 1;
+    }
+
+    /* ===== STORY SECTION ===== */
+    .story-content {
+      max-width: 800px;
+      text-align: left;
+    }
+
+    .story-content p {
+      font-size: 1.15rem;
+      color: var(--text-light);
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ===== DESTINATIONS ===== */
+    .destinations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 3rem;
+    }
+
+    .destination-card {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(14, 165, 233, 0.2);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .destination-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2);
+    }
+
+    .destination-image {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .destination-info {
+      padding: 2rem;
+    }
+
+    .destination-info h3 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+
+    .destination-info p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .destination-info .duration {
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ===== PRICING ===== */
+    .pricing-table {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 3rem;
+      border-collapse: collapse;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(14, 165, 233, 0.2);
+    }
+
+    .pricing-table thead {
+      background: rgba(14, 165, 233, 0.1);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .pricing-table th {
+      padding: 1.5rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .pricing-table td {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+      color: var(--text-light);
+    }
+
+    .pricing-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .price {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .destinations-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-table {
+        font-size: 0.9rem;
+      }
+
+      .pricing-table th,
+      .pricing-table td {
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
   <main>
-    <section class="center">
-      <div class="badge">Supersonic Future</div>
-      <h1>The Art of Aerial Excellence</h1>
-      <p>Transcendez l'expérience ordinaire du voyage. Découvrez une nouvelle dimension du luxe en altitude.</p>
-      <button class="cta">Explore the Cabin</button>
-    </section>
-    
-    <section class="left">
-      <h2>Beyond First Class</h2>
-      <p>Intimité absolue. Confort sans compromis. Chaque détail pensé pour votre voyage parfait.</p>
-    </section>
-    
-    <section class="right">
-      <h2>The Horizon Awaits</h2>
-      <p>Découvrez nos destinations exclusives et nos services premium.</p>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="badge">Premium Aviation Experience</div>
+      <h1>Beyond the Horizon</h1>
+      <p class="subtitle">
+        Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien 
+        avec des services exclusifs, une technologie de pointe et une attention sans pareil.
+      </p>
+      <button class="cta">Réserver Maintenant</button>
     </section>
 
-    <section class="center">
-      <h2>Ready for a Higher Standard?</h2>
-      <p>Réservez votre expérience exclusive dès maintenant.</p>
-      <button class="cta">Book Your Journey</button>
+    <!-- ===== STORY ===== -->
+    <section class="story">
+      <h2>Notre Histoire</h2>
+      <div class="story-content">
+        <p>
+          Depuis 2015, SkyExperience s'engage à transformer chaque vol en une expérience 
+          mémorable. Fondée par des passionnés d'aviation et de luxe, notre compagnie 
+          combine innovation technologique et service impeccable.
+        </p>
+        <p>
+          Chaque détail compte : des cabines privées équipées de technologie dernier cri 
+          aux repas gastronomiques préparés par des chefs renommés, en passant par notre 
+          équipage formé à l'excellence du service.
+        </p>
+        <p>
+          Nous croyons que voyager en première classe ne doit pas être une rareté. 
+          C'est pourquoi nous offrons des tarifs compétitifs sans compromis sur la qualité.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== DESTINATIONS ===== -->
+    <section class="destinations">
+      <h2>Destinations Prestigieuses</h2>
+      <div class="destinations-grid">
+        <!-- Destination 1 -->
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop" alt="Maldives" class="destination-image">
+          <div class="destination-info">
+            <h3>Maldives</h3>
+            <p>Plongez dans le paradis tropical avec nos vols privatisés vers les plus belles îles du monde.</p>
+            <div class="duration">3-5 jours • À partir de 4,500€</div>
+          </div>
+        </div>
+
+        <!-- Destination 2 -->
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1504681869696-d977e3a31323?w=500&h=300&fit=crop" alt="Japon" class="destination-image">
+          <div class="destination-info">
+            <h3>Tokyo</h3>
+            <p>Explorez la fusion captivante entre tradition et modernité dans la métropole japonaise.</p>
+            <div class="duration">4-7 jours • À partir de 5,200€</div>
+          </div>
+        </div>
+
+        <!-- Destination 3 -->
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300&fit=crop" alt="Dubai" class="destination-image">
+          <div class="destination-info">
+            <h3>Dubaï</h3>
+            <p>Expérience ultra-moderne avec accès VIP à ses plus prestigieux hôtels et attractions.</p>
+            <div class="duration">3-4 jours • À partir de 3,800€</div>
+          </div>
+        </div>
+
+        <!-- Destination 4 -->
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1499209974033-537b962e9b94?w=500&h=300&fit=crop" alt="Paris" class="destination-image">
+          <div class="destination-info">
+            <h3>Paris</h3>
+            <p>La Ville Lumière accessible avec service de chauffeur privé et hébergement 5 étoiles inclus.</p>
+            <div class="duration">2-4 jours • À partir de 2,900€</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRICING ===== -->
+    <section class="pricing">
+      <h2>Tarification Transparente</h2>
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th>Classe</th>
+            <th>Inclusions</th>
+            <th>Prix / Heure</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Signature</strong></td>
+            <td>Cabine privée • Repas gastronomique • Wifi illimité • Concierge</td>
+            <td class="price">2,500€</td>
+          </tr>
+          <tr>
+            <td><strong>Prestige</strong></td>
+            <td>Suite luxe • Chef privé • Spa & Wellness • Service blanc</td>
+            <td class="price">4,200€</td>
+          </tr>
+          <tr>
+            <td><strong>Sovereign</strong></td>
+            <td>Résidence aérienne • Expériences sur mesure • Accès universel lounge</td>
+            <td class="price">6,800€</td>
+          </tr>
+          <tr>
+            <td><strong>Imperial</strong></td>
+            <td>Avion entièrement privatisé • Équipage dédié • Itinéraire personnalisé</td>
+            <td class="price">Sur devis</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
   </main>
 
-  <div class="hotspot" id="h1">Cockpit Premium</div>
-  <div class="hotspot" id="h2">Réacteurs Électriques</div>
+  <!-- HOTSPOTS -->
+  <div class="hotspot" id="h1">Cockpit Avancé</div>
+  <div class="hotspot" id="h2">Réacteurs Silencieux</div>
 
+  <!-- THREE.JS IMPORTS -->
   <script type="importmap">
     {
       "imports": {
@@ -149,112 +444,135 @@
 
     // ========== SETUP SCENE ==========
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a1a2e);
-    
+    scene.background = new THREE.Color(0x0F172A);
+    scene.fog = new THREE.Fog(0x0F172A, 20, 50);
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowShadowMap;
     document.body.appendChild(renderer.domElement);
-    
+
     camera.position.set(0, 0, 6);
 
-    // ========== MEILLEUR LIGHTING ==========
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    // ========== LIGHTING ==========
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
-    
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    keyLight.position.set(8, 10, 8);
+
+    const keyLight = new THREE.DirectionalLight(0x00B4FF, 1.0);
+    keyLight.position.set(8, 12, 8);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
+    keyLight.shadow.camera.far = 50;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.6);
-    fillLight.position.set(-8, 5, -8);
+    const fillLight = new THREE.DirectionalLight(0x0EA5E9, 0.5);
+    fillLight.position.set(-8, 6, -8);
     scene.add(fillLight);
 
-    const backLight = new THREE.PointLight(0xd4af37, 0.8);
-    backLight.position.set(0, -5, -10);
-    scene.add(backLight);
+    const rimLight = new THREE.PointLight(0x0EA5E9, 0.6);
+    rimLight.position.set(0, -5, -10);
+    scene.add(rimLight);
 
-    // ========== ASSETS LOADING ==========
+    // ========== LOADER ==========
+    const loader = new OBJLoader();
     const texLoader = new THREE.TextureLoader();
+    
+    // Charger les textures
     const textureFloquage = texLoader.load('../Asset/Floquage.png');
     const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
     textureFloquage.colorSpace = THREE.SRGBColorSpace;
     textureGrosseAile.colorSpace = THREE.SRGBColorSpace;
 
-    const matHull = new THREE.MeshStandardMaterial({ color: 0x2a4d6c, metalness: 0.6, roughness: 0.5, map: textureFloquage });
-    const matWings = new THREE.MeshStandardMaterial({ color: 0x1a3d5c, metalness: 0.3, roughness: 0.6, map: textureGrosseAile });
-    const matGold = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.2 });
+    // Matériaux avec les specs demandées
+    const matHull = new THREE.MeshStandardMaterial({ 
+      color: 0xffffff, 
+      metalness: 0.4, 
+      roughness: 0.5, 
+      map: textureFloquage,
+      envMapIntensity: 1.2 
+    });
+    const matWings = new THREE.MeshStandardMaterial({ 
+      color: 0xffffff, 
+      metalness: 0.4, 
+      roughness: 0.5, 
+      map: textureGrosseAile,
+      envMapIntensity: 1.2 
+    });
+    const matDefault = new THREE.MeshStandardMaterial({ 
+      color: 0xcccccc, 
+      metalness: 0.4, 
+      roughness: 0.5,
+      envMapIntensity: 1.2 
+    });
 
     let airplane = null;
-    const loader = new OBJLoader();
-    loader.load('../Asset/Avion.obj', 
-      (obj) => {
-        airplane = obj;
-        airplane.traverse((node) => {
-          if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-            const name = (node.name || "").toLowerCase();
-            if (name.includes('avion') || name.includes('carcasse')) node.material = matHull;
-            else if (name.includes('aile')) node.material = matWings;
-            else node.material = matGold;
-          }
-        });
-        scene.add(airplane);
-        console.log('✅ Modèle chargé !', airplane);
-      },
-      (progress) => {
-        const percent = (progress.loaded / progress.total * 100).toFixed(0);
-        console.log('📦 Chargement:', percent + '%');
-      },
-      (error) => {
-        console.error('❌ Erreur lors du chargement de l\'avion:', error);
-        // Solution de secours : Créer un cube de test doré pour ne pas avoir de scène vide
-        const geometry = new THREE.BoxGeometry(1.5, 0.5, 4); // Forme allongée comme un fuselage
-        const material = matGold;
-        airplane = new THREE.Mesh(geometry, material);
-        airplane.scale.set(3, 3, 3);
-        scene.add(airplane);
-        console.log('✅ Objet de secours (Cube) créé');
-      }
-    );
+    let modelLoaded = false;
 
-    // ========== ÉTATS SCROLL (4 STATES) ==========
+    loader.load('../Asset/Avion.obj', (obj) => {
+      airplane = obj;
+      
+      // Setup initial position & scale to match Hero state
+      airplane.scale.set(3.5, 3.5, 3.5);
+      airplane.position.set(0, 0.5, 0);
+
+      airplane.traverse((node) => {
+        if (node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
+          
+          const name = (node.name || "").toLowerCase();
+          if (name.includes('avion') || name.includes('carcasse')) {
+             node.material = matHull;
+          } else if (name.includes('aile')) {
+             node.material = matWings;
+          } else {
+             node.material = matDefault;
+          }
+        }
+      });
+
+      scene.add(airplane);
+      modelLoaded = true;
+      console.log('✅ Modèle avion chargé avec succès');
+    }, undefined, (error) => {
+      console.error('❌ Erreur chargement avion:', error);
+      modelLoaded = false;
+    });
+
+    // ========== SCROLL STATES ==========
     const states = [
       {
-        // HERO : Avion face frontale
+        // HERO: Avion face frontale, centré, grand
         position: { x: 0, y: 0.5, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
-        scale: 3,
+        scale: 3.5,
         cameraPos: { x: 0, y: 0, z: 6 }
       },
       {
-        // MIDDLE 1 : Commence à descendre et se tourner
-        position: { x: 1.5, y: -0.5, z: 1 },
-        rotation: { x: -0.15, y: Math.PI * 0.15, z: 0.1 },
-        scale: 3.2,
-        cameraPos: { x: 0.5, y: 0, z: 5.5 }
+        // STORY: Avion déplacé haut droit, petit
+        position: { x: 3, y: 2, z: 1 },
+        rotation: { x: 0.1, y: Math.PI / 5, z: 0 },
+        scale: 1.5,
+        cameraPos: { x: 1, y: 0.5, z: 5.5 }
       },
       {
-        // MIDDLE 2 : Avion plongé et bien tourné (3/4 view)
-        position: { x: 2.5, y: -2, z: 2 },
-        rotation: { x: -0.4, y: Math.PI * 0.5, z: 0.2 },
-        scale: 3.5,
-        cameraPos: { x: 1, y: -1, z: 5 }
+        // DESTINATIONS: Avion en 3/4 côté, hors du chemin
+        position: { x: -4, y: -1, z: 2 },
+        rotation: { x: -0.2, y: Math.PI * 0.6, z: 0.15 },
+        scale: 2,
+        cameraPos: { x: -1.5, y: -0.5, z: 5 }
       },
       {
-        // FINAL : Avion presque de côté
-        position: { x: 3, y: -3, z: 3 },
-        rotation: { x: -0.5, y: Math.PI * 0.75, z: 0.3 },
-        scale: 3.5,
-        cameraPos: { x: 1.5, y: -1.5, z: 4.5 }
+        // PRICING: Avion micro arrière-plan
+        position: { x: 5, y: -3, z: -2 },
+        rotation: { x: -0.4, y: Math.PI * 0.75, z: 0.2 },
+        scale: 1,
+        cameraPos: { x: 2, y: -1, z: 4.5 }
       }
     ];
 
@@ -265,7 +583,32 @@
       scrollProgress = Math.min(window.scrollY / totalHeight, 1);
     });
 
-    // ========== UTILS ==========
+    // ========== HOTSPOTS UPDATE ==========
+    function updateHotspots() {
+      if (!airplane || !modelLoaded) return;
+
+      const worldPos = new THREE.Vector3();
+      airplane.getWorldPosition(worldPos);
+
+      const screenPos = worldPos.project(camera);
+      const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (screenPos.y * -0.5 + 0.5) * window.innerHeight;
+
+      const h1 = document.getElementById('h1');
+      const h2 = document.getElementById('h2');
+
+      h1.style.left = (x + 100) + 'px';
+      h1.style.top = (y - 130) + 'px';
+
+      h2.style.left = (x - 120) + 'px';
+      h2.style.top = (y + 110) + 'px';
+
+      const isVisible = Math.abs(screenPos.z) < 1.8 && scrollProgress > 0.05 && scrollProgress < 0.95;
+      h1.classList.toggle('visible', isVisible);
+      h2.classList.toggle('visible', isVisible);
+    }
+
+    // ========== LERP UTILITIES ==========
     function lerp(a, b, t) {
       return a + (b - a) * Math.min(Math.max(t, 0), 1);
     }
@@ -274,11 +617,29 @@
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
+    function lerpVector(v1, v2, t) {
+      const eased = easeInOutCubic(t);
+      return {
+        x: lerp(v1.x, v2.x, eased),
+        y: lerp(v1.y, v2.y, eased),
+        z: lerp(v1.z, v2.z, eased)
+      };
+    }
+
+    function lerpEuler(r1, r2, t) {
+      const eased = easeInOutCubic(t);
+      return {
+        x: lerp(r1.x, r2.x, eased),
+        y: lerp(r1.y, r2.y, eased),
+        z: lerp(r1.z, r2.z, eased)
+      };
+    }
+
     // ========== ANIMATION LOOP ==========
     function animate() {
       requestAnimationFrame(animate);
 
-      if (airplane) {
+      if (airplane && modelLoaded) {
         const totalStates = states.length - 1;
         const stateIndex = scrollProgress * totalStates;
         const currentStateIdx = Math.floor(stateIndex);
@@ -287,61 +648,42 @@
 
         const currentState = states[currentStateIdx];
         const nextState = states[nextStateIdx];
-        const eased = easeInOutCubic(stateProgress);
 
-        // Position
-        airplane.position.x = lerp(airplane.position.x, lerp(currentState.position.x, nextState.position.x, eased), 0.1);
-        airplane.position.y = lerp(airplane.position.y, lerp(currentState.position.y, nextState.position.y, eased), 0.1);
-        airplane.position.z = lerp(airplane.position.z, lerp(currentState.position.z, nextState.position.z, eased), 0.1);
+        // Position interpolation
+        const targetPos = lerpVector(currentState.position, nextState.position, stateProgress);
+        airplane.position.lerp(new THREE.Vector3(targetPos.x, targetPos.y, targetPos.z), 0.15);
 
-        // Rotation
-        airplane.rotation.x = lerp(airplane.rotation.x, lerp(currentState.rotation.x, nextState.rotation.x, eased), 0.1);
-        airplane.rotation.y = lerp(airplane.rotation.y, lerp(currentState.rotation.y, nextState.rotation.y, eased), 0.1);
-        airplane.rotation.z = lerp(airplane.rotation.z, lerp(currentState.rotation.z, nextState.rotation.z, eased), 0.1);
+        // Rotation interpolation
+        const targetRot = lerpEuler(currentState.rotation, nextState.rotation, stateProgress);
+        airplane.rotation.x = lerp(airplane.rotation.x, targetRot.x, 0.12);
+        airplane.rotation.y = lerp(airplane.rotation.y, targetRot.y, 0.12);
+        airplane.rotation.z = lerp(airplane.rotation.z, targetRot.z, 0.12);
 
-        // Scale
-        const targetScale = lerp(currentState.scale, nextState.scale, eased);
-        airplane.scale.set(
-          lerp(airplane.scale.x, targetScale, 0.1),
-          lerp(airplane.scale.y, targetScale, 0.1),
-          lerp(airplane.scale.z, targetScale, 0.1)
-        );
+        // Scale interpolation
+        const targetScale = lerp(currentState.scale, nextState.scale, easeInOutCubic(stateProgress));
+        const currentScale = airplane.scale.x;
+        const newScale = lerp(currentScale, targetScale, 0.12);
+        airplane.scale.set(newScale, newScale, newScale);
 
-        // Caméra
-        camera.position.x = lerp(camera.position.x, lerp(currentState.cameraPos.x, nextState.cameraPos.x, eased), 0.05);
-        camera.position.y = lerp(camera.position.y, lerp(currentState.cameraPos.y, nextState.cameraPos.y, eased), 0.05);
-        camera.position.z = lerp(camera.position.z, lerp(currentState.cameraPos.z, nextState.cameraPos.z, eased), 0.05);
+        // Camera interpolation
+        const targetCamPos = lerpVector(currentState.cameraPos, nextState.cameraPos, stateProgress);
+        camera.position.lerp(new THREE.Vector3(targetCamPos.x, targetCamPos.y, targetCamPos.z), 0.1);
         camera.lookAt(airplane.position);
 
-        // Hotspots
-        const worldPos = new THREE.Vector3();
-        airplane.getWorldPosition(worldPos);
-        const screenPos = worldPos.project(camera);
-        const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
-        const y = (screenPos.y * -0.5 + 0.5) * window.innerHeight;
-
-        const h1 = document.getElementById('h1');
-        const h2 = document.getElementById('h2');
-        h1.style.left = (x + 80) + 'px';
-        h1.style.top = (y - 120) + 'px';
-        h2.style.left = (x - 100) + 'px';
-        h2.style.top = (y + 100) + 'px';
-
-        const isVisible = Math.abs(screenPos.z) < 1.5;
-        h1.classList.toggle('visible', isVisible && scrollProgress > 0.05 && scrollProgress < 0.95);
-        h2.classList.toggle('visible', isVisible && scrollProgress > 0.05 && scrollProgress < 0.95);
+        updateHotspots();
       }
 
       renderer.render(scene, camera);
     }
 
+    animate();
+
+    // ========== RESPONSIVE ==========
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-    animate();
   </script>
 </body>
 </html>
