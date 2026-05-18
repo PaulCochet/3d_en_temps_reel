@@ -32,13 +32,18 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 0;
+      z-index: 1;
       display: block;
+      pointer-events: none;
     }
 
     main {
       position: relative;
-      z-index: 1;
+      z-index: 2;
+      pointer-events: none; /* Let clicks pass to canvas if needed, but reactivate on children */
+    }
+    main > * {
+      pointer-events: auto;
     }
 
     section {
@@ -86,6 +91,32 @@
     .badge:hover {
       background: var(--primary);
       color: var(--dark);
+    }
+
+    .hero-title-bg {
+      position: absolute;
+      top: 50vh;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+      font-size: 15vw;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.04);
+      white-space: nowrap;
+      z-index: 0; /* Behind the canvas */
+      pointer-events: none;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      z-index: 2;
     }
 
     h1 {
@@ -292,13 +323,15 @@
   <main>
     <!-- ===== HERO ===== -->
     <section class="hero">
-      <div class="badge">Premium Aviation Experience</div>
-      <h1>Beyond the Horizon</h1>
-      <p class="subtitle">
-        Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien
-        avec des services exclusifs, une technologie de pointe et une attention sans pareil.
-      </p>
-      <button class="cta">Réserver Maintenant</button>
+      <h1 class="hero-title-bg">BEYOND THE HORIZON</h1>
+      <div class="hero-content">
+        <div class="badge">Premium Aviation Experience</div>
+        <p class="subtitle" style="text-align: right;">
+          Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien
+          avec des services exclusifs, une technologie de pointe et une attention sans pareil.
+        </p>
+        <button class="cta">Réserver Maintenant</button>
+      </div>
     </section>
 
     <!-- ===== STORY ===== -->
@@ -455,7 +488,7 @@
       new THREE.Box3().setFromObject(airplane).getSize(window.airplaneSize);
 
       // SEULEMENT MAINTENANT, on scale et on positionne
-      airplane.scale.set(3.0, 3.0, 3.0); // Réduit à 3.0 comme demandé
+      airplane.scale.set(1.5, 1.5, 1.5); // Réduit drastiquement pour ne pas encombrer l'écran
       airplane.position.set(0, 15, 0);
 
       scene.add(airplane);
@@ -469,30 +502,30 @@
     // ========== SCROLL STATES ==========
     const states = [
       {
-        // ÉTAT 1 : Hero (De face, rotation 180° pour voir le nez)
+        // ÉTAT 1 : Hero (De face)
         position: { x: 0, y: -0.5, z: 0 },
-        rotation: { x: 0.1, y: Math.PI, z: 0 },
-        scale: 3.0,
-        cameraPos: { x: 0, y: 0, z: 7 }
+        rotation: { x: 0.1, y: 0, z: 0 },
+        scale: 1.5,
+        cameraPos: { x: 0, y: 0, z: 10 }
       },
       {
         // ÉTAT 2 : Story (Passe derrière)
         position: { x: 0, y: 0, z: -4 },
-        rotation: { x: 0.2, y: Math.PI + 0.5, z: -0.1 },
-        scale: 1.8,
-        cameraPos: { x: 0, y: 0, z: 7 }
+        rotation: { x: 0.2, y: 0.5, z: -0.1 },
+        scale: 1.0,
+        cameraPos: { x: 0, y: 0, z: 10 }
       },
       {
         // ÉTAT 3 : Zoom Hotspots
         position: { x: 0, y: 0, z: 0 },
-        rotation: { x: 0.1, y: Math.PI + (Math.PI / 2), z: 0 },
-        scale: 4.5, // Réduit légèrement
-        cameraPos: { x: 0, y: 0, z: 7 }
+        rotation: { x: 0.1, y: Math.PI / 2, z: 0 },
+        scale: 2.5,
+        cameraPos: { x: 0, y: 0, z: 8 }
       },
       {
         // ÉTAT 4 : Final Focus (Au centre)
         position: { x: 0, y: 0.5, z: 0 },
-        rotation: { x: 0.1, y: Math.PI - 0.2, z: 0 },
+        rotation: { x: 0.1, y: -0.2, z: 0 },
         scale: 3.5,
         cameraPos: { x: 0, y: 0, z: 7 }
       }
@@ -518,13 +551,13 @@
       const detail1Local = new THREE.Vector3(0, 0, 0);
       const detail2Local = new THREE.Vector3(0, 0, 0);
       
-      // On inverse l'offset car le modèle a été exporté à l'envers (rotation de 180°)
+      // Hotspots fixés dynamiquement
       if (isZLonger) {
-        detail1Local.z = -offset; // Nez
-        detail2Local.z = offset;  // Queue
+        detail1Local.z = offset;   // Nez
+        detail2Local.z = -offset;  // Queue
       } else {
-        detail1Local.x = -offset;
-        detail2Local.x = offset;
+        detail1Local.x = offset;
+        detail2Local.x = -offset;
       }
 
       const detail1World = detail1Local.applyMatrix4(airplane.matrixWorld);
