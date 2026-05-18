@@ -103,19 +103,21 @@
       top: 50vh;
       left: 50vw;
       transform: translate(-50%, -50%);
-      font-size: 18vw; /* Enorme! */
+      font-size: 24vw; /* Enorme, prend tout l'espace ! */
       font-weight: 900;
-      color: rgba(255, 255, 255, 0.05); /* Invisible if not transparent, now visible */
+      color: rgba(255, 255, 255, 0.04);
       white-space: nowrap;
       z-index: 0; /* Behind the canvas */
       pointer-events: none;
       margin: 0;
       line-height: 1;
       text-transform: uppercase;
-      letter-spacing: -2px;
+      letter-spacing: -6px; /* letter spacing compacte pour remplir la largeur de façon moderne */
       background: none;
       -webkit-background-clip: initial;
       -webkit-text-fill-color: initial;
+      width: 100%;
+      text-align: center;
     }
 
     .hero-content {
@@ -189,17 +191,84 @@
       transform: translateY(-1px);
     }
 
-    /* ===== STORY SECTION ===== */
+    /* ===== BENTO STORY SECTION ===== */
     .story-content {
-      max-width: 800px;
-      text-align: left;
+      max-width: 1200px;
+      width: 90%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      grid-template-rows: 240px 240px;
+      gap: 1.5rem;
+    }
+
+    .bento-card {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 3rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.4s ease;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      border-color: rgba(14, 165, 233, 0.35);
+    }
+
+    .bento-text {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.2rem;
+      text-align: left;
+    }
+
+    .bento-text p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    .bento-image {
+      position: relative;
+    }
+
+    .bento-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bento-image:hover img {
+      transform: scale(1.07);
+    }
+
+    @media (max-width: 968px) {
+      .story-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 1.5rem;
+      }
+      .bento-text {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+        padding: 2rem;
+      }
+      .bento-image {
+        height: 250px;
+      }
     }
 
     /* ===== HOTSPOTS ===== */
@@ -216,6 +285,8 @@
       transition: opacity 0.4s ease, transform 0.4s ease;
       pointer-events: auto; /* Allow interactions if needed */
     }
+    
+    .bento-content-dummy { /* dummy content for alignment */ }
     
     .hotspot.visible {
       opacity: 1;
@@ -366,7 +437,6 @@
     <!-- ===== HERO ===== -->
     <section class="hero">
       <div class="hero-content">
-        <div class="badge">Premium Aviation Experience</div>
         <h2>Beyond the Horizon</h2>
         <p class="subtitle">
           Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien
@@ -380,20 +450,28 @@
     <section class="story">
       <h2>Notre Histoire</h2>
       <div class="story-content">
-        <p>
-          Depuis 2015, SkyExperience s'engage à transformer chaque vol en une expérience
-          mémorable. Fondée par des passionnés d'aviation et de luxe, notre compagnie
-          combine innovation technologique et service impeccable.
-        </p>
-        <p>
-          Chaque détail compte : des cabines privées équipées de technologie dernier cri
-          aux repas gastronomiques préparés par des chefs renommés, en passant par notre
-          équipage formé à l'excellence du service.
-        </p>
-        <p>
-          Nous croyons que voyager en première classe ne doit pas être une rareté.
-          C'est pourquoi nous offrons des tarifs compétitifs sans compromis sur la qualité.
-        </p>
+        <div class="bento-card bento-text">
+          <p>
+            Depuis 2015, SkyExperience s'engage à transformer chaque vol en une expérience
+            mémorable. Fondée par des passionnés d'aviation et de luxe, notre compagnie
+            combine innovation technologique et service impeccable.
+          </p>
+          <p>
+            Chaque détail compte : des cabines privées équipées de technologie dernier cri
+            aux repas gastronomiques préparés par des chefs renommés, en passant par notre
+            équipage formé à l'excellence du service.
+          </p>
+          <p>
+            Nous croyons que voyager en première classe ne doit pas être une rareté.
+            C'est pourquoi nous offrons des tarifs compétitifs sans compromis sur la qualité.
+          </p>
+        </div>
+        <div class="bento-card bento-image">
+          <img src="../Asset/pilot_cockpit.png" alt="Pilote de ligne aux commandes">
+        </div>
+        <div class="bento-card bento-image">
+          <img src="../Asset/plane_in_flight.png" alt="Avion Pollux en vol">
+        </div>
       </div>
     </section>
 
@@ -546,7 +624,7 @@
         // ÉTAT 1 : Hero (De face, rotation 180° pour voir le nez)
         position: { x: 0, y: -0.5, z: 0 },
         rotation: { x: 0.1, y: Math.PI, z: 0 },
-        scale: 1.5,
+        scale: 2.3,
         cameraPos: { x: 0, y: 0, z: 10 }
       },
       {
