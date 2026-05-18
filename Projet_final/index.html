@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -144,20 +145,16 @@
     /* ===== HOTSPOTS ===== */
     .hotspot {
       position: absolute;
-      background: var(--primary);
-      color: var(--dark);
-      padding: 12px 18px;
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: 700;
+      background: rgba(255, 255, 255, 0.95);
+      color: black;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s;
       transform: translate(-50%, -50%);
-      white-space: nowrap;
-      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      z-index: 100;
     }
 
     .hotspot.visible {
@@ -250,16 +247,24 @@
       box-shadow: 0 10px 30px rgba(14, 165, 233, 0.5);
       animation: pulse 2s infinite;
     }
-    
+
     .final-cta:hover {
       box-shadow: 0 15px 40px rgba(14, 165, 233, 0.8);
       transform: translateY(-5px);
     }
 
     @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
-      70% { box-shadow: 0 0 0 20px rgba(14, 165, 233, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 20px rgba(14, 165, 233, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+      }
     }
 
     /* ===== RESPONSIVE ===== */
@@ -282,6 +287,7 @@
     }
   </style>
 </head>
+
 <body>
   <main>
     <!-- ===== HERO ===== -->
@@ -289,7 +295,7 @@
       <div class="badge">Premium Aviation Experience</div>
       <h1>Beyond the Horizon</h1>
       <p class="subtitle">
-        Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien 
+        Découvrez une nouvelle façon de voyager. SkyExperience redéfinit le luxe aérien
         avec des services exclusifs, une technologie de pointe et une attention sans pareil.
       </p>
       <button class="cta">Réserver Maintenant</button>
@@ -300,66 +306,25 @@
       <h2>Notre Histoire</h2>
       <div class="story-content">
         <p>
-          Depuis 2015, SkyExperience s'engage à transformer chaque vol en une expérience 
-          mémorable. Fondée par des passionnés d'aviation et de luxe, notre compagnie 
+          Depuis 2015, SkyExperience s'engage à transformer chaque vol en une expérience
+          mémorable. Fondée par des passionnés d'aviation et de luxe, notre compagnie
           combine innovation technologique et service impeccable.
         </p>
         <p>
-          Chaque détail compte : des cabines privées équipées de technologie dernier cri 
-          aux repas gastronomiques préparés par des chefs renommés, en passant par notre 
+          Chaque détail compte : des cabines privées équipées de technologie dernier cri
+          aux repas gastronomiques préparés par des chefs renommés, en passant par notre
           équipage formé à l'excellence du service.
         </p>
         <p>
-          Nous croyons que voyager en première classe ne doit pas être une rareté. 
+          Nous croyons que voyager en première classe ne doit pas être une rareté.
           C'est pourquoi nous offrons des tarifs compétitifs sans compromis sur la qualité.
         </p>
       </div>
     </section>
 
-    <!-- ===== DESTINATIONS ===== -->
-    <section class="destinations">
-      <h2>Destinations Prestigieuses</h2>
-      <div class="destinations-grid">
-        <!-- Destination 1 -->
-        <div class="destination-card">
-          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop" alt="Maldives" class="destination-image">
-          <div class="destination-info">
-            <h3>Maldives</h3>
-            <p>Plongez dans le paradis tropical avec nos vols privatisés vers les plus belles îles du monde.</p>
-            <div class="duration">3-5 jours • À partir de 4,500€</div>
-          </div>
-        </div>
-
-        <!-- Destination 2 -->
-        <div class="destination-card">
-          <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=500&h=300&fit=crop" alt="Japon" class="destination-image">
-          <div class="destination-info">
-            <h3>Tokyo</h3>
-            <p>Explorez la fusion captivante entre tradition et modernité dans la métropole japonaise.</p>
-            <div class="duration">4-7 jours • À partir de 5,200€</div>
-          </div>
-        </div>
-
-        <!-- Destination 3 -->
-        <div class="destination-card">
-          <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300&fit=crop" alt="Dubai" class="destination-image">
-          <div class="destination-info">
-            <h3>Dubaï</h3>
-            <p>Expérience ultra-moderne avec accès VIP à ses plus prestigieux hôtels et attractions.</p>
-            <div class="duration">3-4 jours • À partir de 3,800€</div>
-          </div>
-        </div>
-
-        <!-- Destination 4 -->
-        <div class="destination-card">
-          <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&h=300&fit=crop" alt="Paris" class="destination-image">
-          <div class="destination-info">
-            <h3>Paris</h3>
-            <p>La Ville Lumière accessible avec service de chauffeur privé et hébergement 5 étoiles inclus.</p>
-            <div class="duration">2-4 jours • À partir de 2,900€</div>
-          </div>
-        </div>
-      </div>
+    <!-- ===== HOTSPOTS ZOOM SECTION ===== -->
+    <section class="destinations" style="pointer-events: none;">
+      <!-- Section vide pour le scroll, laisse l'avion en plein écran pour voir les hotspots -->
     </section>
 
     <!-- ===== FINAL FOCUS ===== -->
@@ -369,8 +334,8 @@
   </main>
 
   <!-- HOTSPOTS -->
-  <div class="hotspot" id="h1">Cockpit Avancé</div>
-  <div class="hotspot" id="h2">Réacteurs Silencieux</div>
+  <div class="hotspot" id="h1">Détail 1</div>
+  <div class="hotspot" id="h2">Détail 2</div>
 
   <!-- THREE.JS IMPORTS -->
   <script type="importmap">
@@ -425,7 +390,7 @@
     // ========== LOADER ==========
     const loader = new OBJLoader();
     const texLoader = new THREE.TextureLoader();
-    
+
     // Charger les textures
     const textureFloquage = texLoader.load('../Asset/Floquage.png');
     const textureGrosseAile = texLoader.load('../Asset/Grosse_aile.png');
@@ -433,25 +398,25 @@
     textureGrosseAile.colorSpace = THREE.SRGBColorSpace;
 
     // Matériaux avec les specs demandées
-    const matHull = new THREE.MeshStandardMaterial({ 
-      color: 0xffffff, 
-      metalness: 0.4, 
-      roughness: 0.5, 
-      map: textureFloquage,
-      envMapIntensity: 1.2 
-    });
-    const matWings = new THREE.MeshStandardMaterial({ 
-      color: 0xffffff, 
-      metalness: 0.4, 
-      roughness: 0.5, 
-      map: textureGrosseAile,
-      envMapIntensity: 1.2 
-    });
-    const matDefault = new THREE.MeshStandardMaterial({ 
-      color: 0xcccccc, 
-      metalness: 0.4, 
+    const matHull = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0.4,
       roughness: 0.5,
-      envMapIntensity: 1.2 
+      map: textureFloquage,
+      envMapIntensity: 1.2
+    });
+    const matWings = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0.4,
+      roughness: 0.5,
+      map: textureGrosseAile,
+      envMapIntensity: 1.2
+    });
+    const matDefault = new THREE.MeshStandardMaterial({
+      color: 0xcccccc,
+      metalness: 0.4,
+      roughness: 0.5,
+      envMapIntensity: 1.2
     });
 
     let airplane = null;
@@ -459,7 +424,7 @@
 
     loader.load('../Asset/Avion.obj', (obj) => {
       airplane = obj;
-      
+
       // Initialisation très haut pour l'animation d'arrivée (Drop in)
       airplane.scale.set(3.5, 3.5, 3.5);
       airplane.position.set(0, 15, 0);
@@ -468,14 +433,14 @@
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
-          
+
           const name = (node.name || "").toLowerCase();
           if (name.includes('avion') || name.includes('carcasse')) {
-             node.material = matHull;
+            node.material = matHull;
           } else if (name.includes('aile')) {
-             node.material = matWings;
+            node.material = matWings;
           } else {
-             node.material = matDefault;
+            node.material = matDefault;
           }
         }
       });
@@ -507,10 +472,10 @@
         cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
-        // ÉTAT 3 : Destinations (Profil pour hotspots)
-        position: { x: 0, y: -0.5, z: 1 },
-        rotation: { x: 0.1, y: Math.PI / 2, z: 0.1 },
-        scale: 3.5,
+        // ÉTAT 3 : Zoom Hotspots
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0.1, y: Math.PI / 2, z: 0 },
+        scale: 5.5, // Zoom énorme pour bien voir les détails
         cameraPos: { x: 0, y: 0, z: 7 }
       },
       {
@@ -518,7 +483,7 @@
         position: { x: 0, y: 0.5, z: 0 },
         rotation: { x: 0.1, y: -0.2, z: 0 },
         scale: 3.5,
-        cameraPos: { x: 0, y: 0, z: 7 }
+        cameraPos: { x: 0, y: 0, z: 0 }
       }
     ];
 
@@ -533,26 +498,34 @@
     function updateHotspots() {
       if (!airplane || !modelLoaded) return;
 
-      const worldPos = new THREE.Vector3();
-      airplane.getWorldPosition(worldPos);
+      // Définition de points locaux 3D pour suivre le modèle exactement
+      const detail1Local = new THREE.Vector3(0, 0, 1.5);
+      const detail2Local = new THREE.Vector3(0, 0, -1.5);
 
-      const screenPos = worldPos.project(camera);
-      const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
-      const y = (screenPos.y * -0.5 + 0.5) * window.innerHeight;
+      const detail1World = detail1Local.applyMatrix4(airplane.matrixWorld);
+      const detail2World = detail2Local.applyMatrix4(airplane.matrixWorld);
+
+      const pos1 = detail1World.project(camera);
+      const pos2 = detail2World.project(camera);
+
+      const x1 = (pos1.x * 0.5 + 0.5) * window.innerWidth;
+      const y1 = (pos1.y * -0.5 + 0.5) * window.innerHeight;
+
+      const x2 = (pos2.x * 0.5 + 0.5) * window.innerWidth;
+      const y2 = (pos2.y * -0.5 + 0.5) * window.innerHeight;
 
       const h1 = document.getElementById('h1');
       const h2 = document.getElementById('h2');
 
-      h1.style.left = (x + 150) + 'px';
-      h1.style.top = (y - 150) + 'px';
+      h1.style.left = x1 + 'px';
+      h1.style.top = y1 + 'px';
 
-      h2.style.left = (x - 150) + 'px';
-      h2.style.top = (y + 120) + 'px';
+      h2.style.left = x2 + 'px';
+      h2.style.top = y2 + 'px';
 
-      // Hotspots toujours visibles tant que l'avion est devant la caméra
-      const isVisible = Math.abs(screenPos.z) <= 1.0;
-      h1.classList.toggle('visible', isVisible);
-      h2.classList.toggle('visible', isVisible);
+      // Visibles s'ils ne sont pas derrière la caméra
+      h1.classList.toggle('visible', Math.abs(pos1.z) <= 1.0);
+      h2.classList.toggle('visible', Math.abs(pos2.z) <= 1.0);
     }
 
     // ========== LERP UTILITIES ==========
@@ -600,7 +573,7 @@
 
         // Intro drop animation
         if (introY > 0.01) {
-           introY += (0 - introY) * 0.04;
+          introY += (0 - introY) * 0.04;
         }
 
         // Position interpolation
@@ -640,4 +613,5 @@
     });
   </script>
 </body>
+
 </html>
